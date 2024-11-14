@@ -15,7 +15,7 @@ rules = [
 
 [[routes]]
 # Refer to https://developers.cloudflare.com/workers/wrangler/configuration/#routes
-pattern = "shz.al"
+pattern = "1yun.us.kg"
 custom_domain = true
 
 [[kv_namespaces]]
@@ -24,7 +24,7 @@ id = "f4564dbb9d2047378069f55fcde60192"  # id of your KV namespace
 
 [vars]
 # must be consistent with your routes
-BASE_URL = "https://shz.al"
+BASE_URL = "https://1yun.us.kg"
 
 # url to repo, displayed in the index page
 REPO = "https://github.com/wonder0091/pastebin-worker"
