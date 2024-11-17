@@ -164,7 +164,7 @@ test("custom path", async () => {
     "c": blob1,
     "n": goodName,
   })
-  expect(uploadResponseJson["url"]).toStrictEqual(`${BASE_URL}/~${goodName}`)
+  expect(uploadResponseJson["url"]).toStrictEqual(`${BASE_URL}/${goodName}`)
 
   // check revisit
   const revisitResponse = await workerFetch(uploadResponseJson["url"])
