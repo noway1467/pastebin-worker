@@ -147,7 +147,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
   } else {
     let short = undefined
     if (name !== undefined) {
-      short = "~" + name
+      short = name
       if ((await env.PB.get(short)) !== null)
         throw new WorkerError(409, `name '${name}' is already used`)
     }
