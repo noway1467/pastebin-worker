@@ -11,7 +11,7 @@ body {
     font-family: sans-serif;
     flex: 1;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1240px;
 }
 
 .markdown-body tt, .markdown-body code {
@@ -131,6 +131,7 @@ body {
     border: none;
     outline: none;
     resize: vertical;
+    min-height: 520px; /* 提高左栏默认高度 */
 }
 
 #paste-file-upload {

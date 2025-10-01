@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <meta charset='UTF-8'>
-<title>粘贴板</title>
+<title>在线剪切板</title>
     <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
     <link rel='icon' href='{{FAVICON}}' type='image/png' />
     <style media='screen'>
@@ -10,7 +10,7 @@
 </head>
 <html lang='zh-CN'>
 <body>
-<div class='px-3 my-2 markdown-body'>
+<div class='px-2 my-1 markdown-body'>
     <a href='index.html'><h1>在线剪切板</h1></a>
     <p>更多信息见 <a href='{{REPO}}'>GitHub</a>。</p>
 
@@ -76,35 +76,37 @@
             <input type='url' spellcheck='false' id='paste-admin-url-input'
                    name='admin-url' value='{{BASE_URL}}'>
         </div>
+        <div>
+            <button id='submit-button' class='long-button px-3 py-2 my-1'>上传</button>
+            <button id='delete-button' class='long-button hidden px-3 py-2 my-1'>删除</button>
+            <span id='submit-error-msg'></span>
+        </div>
+
+        <div id='paste-uploaded-panel' class='hidden'>
+            <h2>上传结果</h2>
+            <div class='uploaded-entry'>
+                <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
+                <button class='copy-button'>复制</button>
+            </div>
+            <label for='uploaded-url' class='small-label'>普通链接</label>
+            <div class='uploaded-entry'>
+                <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
+                <button class='copy-button'>复制</button>
+            </div>
+            <label for='uploaded-url-with-v' class='small-label'>加密链接（含 ?v= 查看密码）</label>
+            <div class='uploaded-entry'>
+                <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
+                <button class='copy-button'>复制</button>
+            </div>
+            <label for='suggest-url' class='small-label'>编辑链接</label>
+            <div class='uploaded-entry'>
+                <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
+            </div>
+            <label for='uploaded-expiration' class='small-label'>过期时间（秒）</label>
+        </div>
     </div>
     </div>
-    <div id='paste-uploaded-panel' class='hidden'>
-        <h2>上传结果</h2>
-        <div class='uploaded-entry'>
-            <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
-            <button class='copy-button'>复制</button>
-        </div>
-        <label for='uploaded-url' class='small-label'>普通链接</label>
-        <div class='uploaded-entry'>
-            <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
-            <button class='copy-button'>复制</button>
-        </div>
-        <label for='uploaded-url-with-v' class='small-label'>加密链接（含 ?v= 查看密码）</label>
-        <div class='uploaded-entry'>
-            <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
-            <button class='copy-button'>复制</button>
-        </div>
-        <label for='suggest-url' class='small-label'>编辑链接</label>
-        <div class='uploaded-entry'>
-            <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
-        </div>
-        <label for='uploaded-expiration' class='small-label'>过期时间（秒）</label>
-    </div>
-    <div>
-        <button id='submit-button' class='long-button px-3 py-2 my-1'>上传</button>
-        <button id='delete-button' class='long-button hidden px-3 py-2 my-1'>删除</button>
-        <span id='submit-error-msg'></span>
-    </div>
+    
 </div>
 <footer class='px-3 my-2 text-center'>
     <p>
