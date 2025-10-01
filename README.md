@@ -2,8 +2,6 @@
 
 这是一个可以部署在 Cloudflare Workers 上的 Pastebin。线上示例见 [shz.al](https://shz.al)。
 
-**设计理念**：易于部署、友好的命令行使用、功能丰富。
-
 **功能特性**：
 
 1. 仅 4 个字符即可分享粘贴
@@ -18,13 +16,6 @@
 11. 支持条件 GET（`Last-Modified`/`If-Modified-Since`）
 12. 默认开启 CORS（`Access-Control-Allow-Origin: *`）
 
-## 使用方式
-
-1. 你可以直接在网站（如 [shz.al](https://shz.al)）上上传、更新、删除粘贴。
-
-2. 同时提供便捷的 HTTP API，详见 [API 文档](doc/api.md)。你可以使用 `curl` 等命令行工具轻松调用。
-
-3. 目录中的 [pb](/scripts) Bash 脚本可简化命令行的调用体验。
 
 ## 限制
 
