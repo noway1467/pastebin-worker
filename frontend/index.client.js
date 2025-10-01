@@ -287,6 +287,16 @@ window.addEventListener('DOMContentLoaded', () => {
     if (uploaded.expire) {
       $('#uploaded-expiration').prop('value', uploaded.expire)
     }
+    // 若设置了查看密码，生成带 ?v= 的便捷复制链接
+    if (viewPasswd && viewPasswd.length > 0) {
+      $('#uploaded-url-with-v').prop('value', `${uploaded.url}?v=${encodeURIComponent(viewPasswd)}`)
+      if (uploaded.suggestUrl) {
+        $('#uploaded-suggest-url-with-v').prop('value', `${uploaded.suggestUrl}?v=${encodeURIComponent(viewPasswd)}`)
+      }
+    } else {
+      $('#uploaded-url-with-v').prop('value', '')
+      $('#uploaded-suggest-url-with-v').prop('value', '')
+    }
     updateButtons()
   }
 
@@ -323,14 +333,51 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#paste-admin-url-input').val(location.href)
       urlType = 'admin'
       adminUrl = location.href
+      // 自动填充管理密码输入框
+      $('#paste-passwd-input').val(passwd)
+      // 同步内存中的密码变量
+      $("#paste-passwd-input").trigger('input')
+
+      // 如果 URL 上自带 ?v=，优先使用
+      const params = new URLSearchParams(location.search)
+      const vFromUrl = params.get('v') || ''
+      if (vFromUrl.length > 0) {
+        viewPasswd = vFromUrl
+        $('#paste-view-passwd-input').val(vFromUrl)
+      }
+
       updateButtons()
-      $.ajax({
-        url: "/" + short,
-        success: paste => {
-          pasteEditArea.val(paste)
-          updateButtons()
-        },
-        error: handleError,
+
+      function loadPasteForAdmin() {
+        let url = "/" + short
+        if (viewPasswd && viewPasswd.length > 0) {
+          url += `?v=${encodeURIComponent(viewPasswd)}`
+        }
+        $.ajax({
+          url,
+          success: paste => {
+            pasteEditArea.val(paste)
+            updateButtons()
+          },
+          error: (error) => {
+            // 若需要查看密码，提示用户在输入框填写后自动重试
+            if ((error.status === 401 || error.status === 403) && (!viewPasswd || viewPasswd.length === 0)) {
+              submitErrMsg.text('该粘贴已加密，请在“查看密码”中输入后重试')
+              $('#paste-view-passwd-input').focus()
+            } else {
+              handleError(error)
+            }
+          },
+        })
+      }
+
+      // 首次尝试加载
+      loadPasteForAdmin()
+
+      // 当用户填写/修改查看密码时尝试重新加载
+      $('#paste-view-passwd-input').on('change', () => {
+        viewPasswd = $('#paste-view-passwd-input').val()
+        loadPasteForAdmin()
       })
     }
   }
