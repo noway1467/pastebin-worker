@@ -11,7 +11,7 @@ body {
     font-family: sans-serif;
     flex: 1;
     width: 100%;
-    max-width: 1012px;
+    max-width: 1200px;
 }
 
 .markdown-body tt, .markdown-body code {
@@ -50,6 +50,23 @@ body {
     border: 1px var(--color-border) solid;
     margin: 0.5rem 0;
 }
+
+/* 布局：移动端上下；桌面端左右（输入区左，设置右） */
+.panels {
+    display: block;
+}
+
+@media (min-width: 1012px) {
+    .panels {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-gap: 16px;
+        align-items: start;
+    }
+}
+
+/* 减少顶部留白 */
+.my-2 { margin-top: 8px !important; margin-bottom: 8px !important; }
 
 #paste-header {
     background-color: var(--color-shadowed);
