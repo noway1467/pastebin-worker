@@ -11,7 +11,7 @@
 <html lang='zh-CN'>
 <body>
 <div class='px-3 my-5 markdown-body'>
-    <a href='index.html'><h1>简易粘贴板</h1></a>
+    <a href='index.html'><h1>在线剪切板</h1></a>
     <p>更多信息见 <a href='{{REPO}}'>GitHub</a>。</p>
 
     <div id='paste-input-panel'>
@@ -44,11 +44,11 @@
         </div>
         <div id='paste-view-passwd-panel' class='paste-setting-subitem-panel'>
             <input type='text' spellcheck='false' id='paste-view-passwd-input' placeholder='查看密码（可选）'>
-            <label class='small-label' for='paste-view-passwd-input'>设置查看密码后，访问时需在 URL 查询参数中携带 v=密码 才能查看内容。</label>
+            <label class='small-label' for='paste-view-passwd-input'>查看密码：访问时需在URL查询参数中携带 v=密码 才能查看内容。</label>
         </div>
         <div id='paste-passwd-panel' class='paste-setting-subitem-panel'>
             <input type='text' spellcheck='false' name='paste-expiration' id='paste-passwd-input' placeholder='管理密码'>
-            <label class='small-label' for='paste-passwd-input'>用于删除/更新粘贴。不填则随机生成。</label>
+            <label class='small-label' for='paste-passwd-input'>编辑密码：用于删除/更新粘贴。不填则随机生成。</label>
         </div>
         <div class='label-line'>
             <input type='radio' name='url-type' value='short' id='paste-url-short-radio' checked>
@@ -62,7 +62,7 @@
         </div>
         <div class='label-line'>
             <input type='radio' name='url-type' value='custom' id='paste-url-custom-radio'>
-            <label for='paste-url-custom-radio' class='radio-label'>自定义名称</label>
+            <label for='paste-url-custom-radio' class='radio-label'>自定义URL</label>
             <div id='paste-url-input-wrapper'>
                 <span id='paste-url-input-prefix'>{{BASE_URL}}/</span>
                 <input type='text' id='paste-custom-url-input' minlength='3' name='custom-url'>
@@ -71,7 +71,7 @@
         </div>
         <div class='label-line'>
             <input type='radio' name='url-type' value='admin' id='paste-url-admin-radio'>
-            <label for='paste-url-admin-radio' class='radio-label'>更新/删除已存在的粘贴</label>
+            <label for='paste-url-admin-radio' class='radio-label'>更新页面</label>
             <input type='url' spellcheck='false' id='paste-admin-url-input'
                    name='admin-url' value='{{BASE_URL}}'>
         </div>
@@ -82,27 +82,17 @@
             <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
             <button class='copy-button'>复制</button>
         </div>
-        <label for='uploaded-url' class='small-label'>URL</label>
+        <label for='uploaded-url' class='small-label'>普通链接</label>
         <div class='uploaded-entry'>
             <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
             <button class='copy-button'>复制</button>
         </div>
-        <label for='uploaded-url-with-v' class='small-label'>URL（含 ?v= 查看密码）</label>
+        <label for='uploaded-url-with-v' class='small-label'>加密链接（含 ?v= 查看密码）</label>
         <div class='uploaded-entry'>
             <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
             <button class='copy-button'>复制</button>
         </div>
-        <label for='suggest-url' class='small-label'>管理链接</label>
-        <div class='uploaded-entry'>
-            <input id='uploaded-suggest-url' type='text' class='uploaded-table-text' readonly>
-            <button class='copy-button'>复制</button>
-        </div>
-        <label for='uploaded-admin-url' class='small-label'>建议链接</label>
-        <div class='uploaded-entry'>
-            <input id='uploaded-suggest-url-with-v' type='text' class='uploaded-table-text' readonly>
-            <button class='copy-button'>复制</button>
-        </div>
-        <label for='uploaded-suggest-url-with-v' class='small-label'>建议链接（含 ?v= 查看密码）</label>
+        <label for='suggest-url' class='small-label'>编辑链接</label>
         <div class='uploaded-entry'>
             <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
         </div>
