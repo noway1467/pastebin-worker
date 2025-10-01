@@ -293,9 +293,12 @@ window.addEventListener('DOMContentLoaded', () => {
       if (uploaded.suggestUrl) {
         $('#uploaded-suggest-url-with-v').prop('value', `${uploaded.suggestUrl}?v=${encodeURIComponent(viewPasswd)}`)
       }
+      // 生成带查看密码的管理链接
+      $('#uploaded-admin-url-with-v').prop('value', `${uploaded.admin}?v=${encodeURIComponent(viewPasswd)}`)
     } else {
       $('#uploaded-url-with-v').prop('value', '')
       $('#uploaded-suggest-url-with-v').prop('value', '')
+      $('#uploaded-admin-url-with-v').prop('value', '')
     }
     updateButtons()
   }
