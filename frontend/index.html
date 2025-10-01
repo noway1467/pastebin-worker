@@ -12,7 +12,6 @@
 <body>
 <div class='px-2 my-1 markdown-body'>
     <a href='index.html'><h1>在线剪切板</h1></a>
-    <p>更多信息见 <a href='{{REPO}}'>GitHub</a>。</p>
 
     <div id='main-panels' class='panels'>
     <div id='paste-input-panel'>
@@ -88,22 +87,22 @@
                 <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
                 <button class='copy-button'>复制</button>
             </div>
-            <label for='uploaded-url' class='small-label'>普通链接</label>
-            <div class='uploaded-entry'>
-                <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
-                <button class='copy-button'>复制</button>
-            </div>
-            <label for='uploaded-url-with-v' class='small-label'>加密链接（含 ?v= 查看密码）</label>
+            <label for='uploaded-url' class='small-label'>普通链接：只读</label>
             <div class='uploaded-entry'>
                 <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
                 <button class='copy-button'>复制</button>
             </div>
-            <label for='suggest-url' class='small-label'>编辑链接</label>
+            <label for='suggest-url' class='small-label'>编辑链接：可以修改页面内容和设置</label>
+            <div class='uploaded-entry'>
+                <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
+                <button class='copy-button'>复制</button>
+            </div>
+            <label for='uploaded-url-with-v' class='small-label'>加密链接：需要密码才能查看</label>
             <div class='uploaded-entry'>
                 <input id='uploaded-admin-url-with-v' type='text' class='uploaded-table-text' readonly>
                 <button class='copy-button'>复制</button>
             </div>
-            <label for='uploaded-admin-url-with-v' class='small-label'>编辑链接（含 ?v= 查看密码）</label>
+            <label for='uploaded-admin-url-with-v' class='small-label'>管理链接（包含以上两者）</label>
             <div class='uploaded-entry'>
                 <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
             </div>
