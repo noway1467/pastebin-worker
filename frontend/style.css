@@ -49,6 +49,7 @@ body {
 #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
     border: 1px var(--color-border) solid;
     margin: 0.5rem 0;
+    border-radius: 6px;
 }
 
 /* 布局：移动端上下；桌面端左右（输入区左，设置右） */
@@ -132,6 +133,7 @@ body {
     outline: none;
     resize: vertical;
     min-height: 520px; /* 提高左栏默认高度 */
+    border-radius: 6px;
 }
 
 #paste-file-upload {
@@ -287,6 +289,7 @@ input:not(:checked) ~ #paste-admin-url-input {
     display: flex;
     align-items: center;
     border: 1px var(--color-border) solid;
+    border-radius: 6px;
 }
 
 .uploaded-entry > input {
@@ -326,4 +329,23 @@ footer {
         margin: 0 auto;
         display: block;
     }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
