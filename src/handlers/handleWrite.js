@@ -60,18 +60,20 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
   const adminUrl = env.BASE_URL + "/" + short + params.SEP + passwd
   return {
     url: accessUrl,
-    suggestUrl: suggestUrl(content, filename, short, env.BASE_URL),
+    suggestUrl: suggestUrl(content, filename, short, env.BASE_URL, form.has("m")),
     admin: adminUrl,
     isPrivate: isPrivate,
     expire: expire || null,
   }
 }
 
-function suggestUrl(content, filename, short, baseUrl) {
+function suggestUrl(content, filename, short, baseUrl, asMarkdown) {
   if (filename) {
     return `${baseUrl}/${short}/${filename}`
   } else if (isLegalUrl(decode(content))) {
     return `${baseUrl}/u/${short}`
+  } else if (asMarkdown) {
+    return `${baseUrl}/a/${short}`
   } else {
     return null
   }

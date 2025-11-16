@@ -239,6 +239,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
+    if ($('#paste-as-markdown-checkbox').prop('checked')) fd.append('m', 'true')
 
     $.ajax({
       method: 'PUT',
@@ -267,6 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
+    if ($('#paste-as-markdown-checkbox').prop('checked')) fd.append('m', 'true')
 
     if (urlType === 'long') fd.append('p', 'true')
     if (urlType === 'custom') fd.append('n', customName)

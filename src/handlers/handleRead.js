@@ -85,13 +85,17 @@ export async function handleGet(request, env, ctx) {
 
   // handle language highlight
   const lang = url.searchParams.get("lang")
-  if (lang) {
-    return new Response(makeHighlight(decode(item.value), lang), {
-      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
-    })
-  } else if (role !== "u" && !item.metadata?.filename) {
+  // handle article (render as markdown)
+  if (role === "a") {
     const md = makeMarkdown(decode(item.value))
     return new Response(md, {
+      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
+    })
+  }
+
+  // handle language highlight
+  if (lang) {
+    return new Response(makeHighlight(decode(item.value), lang), {
       headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
     })
   } else {

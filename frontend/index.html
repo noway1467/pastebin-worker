@@ -55,6 +55,10 @@
             <label class='small-label' for='paste-passwd-input'>管理密码：用于删除/更新页面。不填则随机生成。</label>
         </div>
         <div class='label-line'>
+            <input type='checkbox' id='paste-as-markdown-checkbox'>
+            <label for='paste-as-markdown-checkbox' class='radio-label'>渲染为 Markdown</label>
+        </div>
+        <div class='label-line'>
             <input type='radio' name='url-type' value='short' id='paste-url-short-radio' checked>
             <label for='paste-url-short-radio' class='radio-label'>生成短随机链接</label>
             <span class='small-label'>示例：{{BASE_URL}}/BxWH</span>
