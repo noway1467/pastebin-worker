@@ -126,17 +126,28 @@ window.addEventListener('DOMContentLoaded', () => {
   function updateTabBar() {
     if (inputType === 'file') {
       $('#paste-tab-edit').removeClass('enabled')
+      $('#paste-tab-preview').removeClass('enabled')
       $('#paste-tab-file').addClass('enabled')
       $('#paste-file-show').addClass('enabled')
       $('#paste-edit').removeClass('enabled')
-    } else {
+      $('#paste-preview').removeClass('enabled')
+    } else if (inputType === 'edit') {
       $('#paste-tab-file').removeClass('enabled')
+      $('#paste-tab-preview').removeClass('enabled')
       $('#paste-tab-edit').addClass('enabled')
       $('#paste-edit').addClass('enabled')
       $('#paste-file-show').removeClass('enabled')
+      $('#paste-preview').removeClass('enabled')
+    } else if (inputType === 'preview') {
+      $('#paste-tab-file').removeClass('enabled')
+      $('#paste-tab-edit').removeClass('enabled')
+      $('#paste-tab-preview').addClass('enabled')
+      $('#paste-preview').addClass('enabled')
+      $('#paste-edit').removeClass('enabled')
+      $('#paste-file-show').removeClass('enabled')
     }
   }
-
+ 
   $('#paste-tab-file').on('input', event => {
     const files = event.target.files
     if (files.length === 0) return
@@ -148,14 +159,26 @@ window.addEventListener('DOMContentLoaded', () => {
     fileLine.children('.file-name').text(file.name)
     fileLine.children('.file-size').text(formatSize(file.size))
   })
-
+ 
   $('#paste-tab-edit').on('click', () => {
     inputType = 'edit'
     updateButtons()
     updateTabBar()
   })
-
-  pasteEditArea.on('input', updateButtons)
+ 
+  $('#paste-tab-preview').on('click', () => {
+    inputType = 'preview'
+    updateButtons()
+    updateTabBar()
+    $('#preview-content').html(marked.parse(pasteEditArea.val()))
+  })
+ 
+  pasteEditArea.on('input', () => {
+    updateButtons()
+    if (inputType === 'preview') {
+      $('#preview-content').html(marked.parse(pasteEditArea.val()))
+    }
+  })
 
   $('#paste-expiration-input').on('input', event => {
     expiration = event.target.value

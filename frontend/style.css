@@ -318,3 +318,12 @@ footer {
     width: 100%;
     max-width: 1012px;
 }
+
+
+@media (max-width: 768px) {
+    #paste-textarea {
+        width: 85%;
+        margin: 0 auto;
+        display: block;
+    }
+}

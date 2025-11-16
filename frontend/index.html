@@ -11,13 +11,14 @@
 <html lang='zh-CN'>
 <body>
 <div class='px-2 my-1 markdown-body'>
-    <a href='index.html'><h1>在线剪切板</h1></a>
+    <h1><a href='index.html'>在线剪切板</a></h1>
 
     <div id='main-panels' class='panels'>
     <div id='paste-input-panel'>
         <div id='paste-header'>
             <div class='paste-header-tabs'>
                 <div class="paste-tab enabled" id='paste-tab-edit'>编辑文本</div>
+                <div class="paste-tab" id='paste-tab-preview'>预览</div>
                 <label for='paste-file-upload' id='paste-tab-file' class='paste-tab'>
                     <input type='file' placeholder='' id='paste-file-upload'>
                     <label for='paste-file-upload'>上传文件</label>
@@ -27,6 +28,9 @@
         </div>
         <div class="paste-tab-page enabled" id='paste-edit'>
             <textarea placeholder='在此输入内容' id='paste-textarea' name='c' rows='20'></textarea>
+        </div>
+        <div class="paste-tab-page" id='paste-preview'>
+             <div id="preview-content" class="markdown-body" style="padding: 1em;"></div>
         </div>
         <div class='paste-tab-page' id='paste-file-show'>
             <p id='paste-file-line'>
@@ -120,6 +124,7 @@
     </p>
 </footer>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     {{INDEX_JS}}
 </script>
