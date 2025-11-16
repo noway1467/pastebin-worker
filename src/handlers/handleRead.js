@@ -44,6 +44,16 @@ export async function handleGet(request, env, ctx) {
 
   const mime = url.searchParams.get("mime") || getType(ext) || "text/plain"
 
+  if (url.searchParams.has("meta")) {
+    const item = await env.PB.getWithMetadata(short)
+    if (item.value === null) {
+      throw new WorkerError(404, `paste of name '${short}' not found`)
+    }
+    return new Response(JSON.stringify(item.metadata), {
+      headers: { "content-type": "application/json;charset=UTF-8" },
+    })
+  }
+
   const disp = url.searchParams.has("a") ? "attachment" : "inline"
 
   const item = await env.PB.getWithMetadata(short, { type: "arrayBuffer" })
@@ -85,20 +95,7 @@ export async function handleGet(request, env, ctx) {
 
   // handle language highlight
   const lang = url.searchParams.get("lang")
-  // handle article (render as markdown)
-  if (role === "a") {
-    const md = makeMarkdown(decode(item.value))
-    return new Response(md, {
-      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
-    })
-  }
-
-  // handle language highlight
-  if (lang) {
-    return new Response(makeHighlight(decode(item.value), lang), {
-      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
-    })
-  } else {
+  let content = item.value
 
   // handle view protection: require v (view password) query parameter to decrypt
   if (item.metadata?.vProtected) {
@@ -109,28 +106,34 @@ export async function handleGet(request, env, ctx) {
     try {
       const salt = base64ToUint8Array(item.metadata.vSalt)
       const iv = base64ToUint8Array(item.metadata.vIv)
-      const plain = await decryptWithPassword(item.value, viewPasswd, salt, iv)
-      const headers = { "content-type": `${mime};charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) }
-      if (returnFilename) {
-        const encodedFilename = encodeRFC5987ValueChars(returnFilename)
-        headers["content-disposition"] = `${disp}; filename*=UTF-8''${encodedFilename}`
-      } else {
-        headers["content-disposition"] = `${disp}`
-      }
-      return new Response(plain, { headers })
+      content = await decryptWithPassword(content, viewPasswd, salt, iv)
     } catch (e) {
       throw new WorkerError(403, "incorrect view password")
     }
   }
 
+  // handle article (render as markdown)
+  if (role === "a") {
+    const md = makeMarkdown(decode(content))
+    return new Response(md, {
+      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
+    })
+  }
+
+  // handle language highlight
+  if (lang) {
+    return new Response(makeHighlight(decode(content), lang), {
+      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
+    })
+  }
+
   // handle default (not protected)
   const headers = { "content-type": `${mime};charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) }
-    if (returnFilename) {
-      const encodedFilename = encodeRFC5987ValueChars(returnFilename)
-      headers["content-disposition"] = `${disp}; filename*=UTF-8''${encodedFilename}`
-    } else {
-      headers["content-disposition"] = `${disp}`
-    }
-    return new Response(item.value, { headers })
+  if (returnFilename) {
+    const encodedFilename = encodeRFC5987ValueChars(returnFilename)
+    headers["content-disposition"] = `${disp}; filename*=UTF-8''${encodedFilename}`
+  } else {
+    headers["content-disposition"] = `${disp}`
   }
+  return new Response(content, { headers })
 }

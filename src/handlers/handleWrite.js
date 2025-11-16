@@ -15,7 +15,7 @@ import {
 async function createPaste(env, content, isPrivate, expire, short, createDate, passwd, filename, viewPasswd, existingMeta, asMarkdown) {
   const now = new Date().toISOString()
   createDate = createDate || now
-  passwd = passwd || genRandStr(params.ADMIN_PATH_LEN)
+  passwd = (passwd && passwd.length > 0) ? passwd : genRandStr(params.ADMIN_PATH_LEN)
   const short_len = isPrivate ? params.PRIVATE_RAND_LEN : params.RAND_LEN
 
   // repeat until finding an unused name
@@ -32,6 +32,7 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
       passwd: passwd,
       filename: filename,
       lastModified: now,
+      asMarkdown: asMarkdown,
     },
   }
 
@@ -56,7 +57,7 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
 
   await env.PB.put(short, contentToStore, options)
 
-  let accessUrl = env.BASE_URL + "/" + short
+  let accessUrl = asMarkdown ? `${env.BASE_URL}/a/${short}` : `${env.BASE_URL}/${short}`
   const adminUrl = env.BASE_URL + "/" + short + params.SEP + passwd
   return {
     url: accessUrl,

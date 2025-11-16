@@ -406,6 +406,16 @@ window.addEventListener('DOMContentLoaded', () => {
       // 首次尝试加载
       loadPasteForAdmin()
 
+      // fetch metadata and update UI
+      $.ajax({
+        url: "/" + short + "?meta",
+        success: meta => {
+          if (meta.asMarkdown) {
+            $('#paste-as-markdown-checkbox').prop('checked', true)
+          }
+        },
+      })
+
       // 当用户填写/修改查看密码时尝试重新加载
       $('#paste-view-passwd-input').on('change', () => {
         viewPasswd = $('#paste-view-passwd-input').val()
