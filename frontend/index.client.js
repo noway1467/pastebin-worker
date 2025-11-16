@@ -231,7 +231,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (inputType === 'file') {
       fd.append('c', file)
     } else {
-      fd.append('c', pasteEditArea.prop('value'))
+      fd.append('c', new Blob([pasteEditArea.prop('value')]))
     }
 
     if (expiration.length > 0) fd.append('e', expiration)
@@ -257,7 +257,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (inputType === 'file') {
       fd.append('c', file)
     } else {
-      fd.append('c', pasteEditArea.prop('value'))
+      fd.append('c', new Blob([pasteEditArea.prop('value')]))
     }
 
     if (expiration.length > 0) fd.append('e', expiration)
