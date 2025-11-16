@@ -12,7 +12,7 @@ import {
   WorkerError,
 } from "../common.js"
 
-async function createPaste(env, content, isPrivate, expire, short, createDate, passwd, filename, viewPasswd, existingMeta) {
+async function createPaste(env, content, isPrivate, expire, short, createDate, passwd, filename, viewPasswd, existingMeta, asMarkdown) {
   const now = new Date().toISOString()
   createDate = createDate || now
   passwd = passwd || genRandStr(params.ADMIN_PATH_LEN)
@@ -60,7 +60,7 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
   const adminUrl = env.BASE_URL + "/" + short + params.SEP + passwd
   return {
     url: accessUrl,
-    suggestUrl: suggestUrl(content, filename, short, env.BASE_URL, form.has("m")),
+    suggestUrl: suggestUrl(content, filename, short, env.BASE_URL, asMarkdown),
     admin: adminUrl,
     isPrivate: isPrivate,
     expire: expire || null,
@@ -108,6 +108,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
   const filename = form.get("c") && getDispFilename(form.get("c").fields)
   const name = form.get("n") && decode(form.get("n").content)
   const isPrivate = form.get("p") !== undefined
+  const asMarkdown = form.has("m")
   const newPasswd = form.get("s") && decode(form.get("s").content)
   const viewPasswd = form.get("v") && decode(form.get("v").content)
   const expire =
@@ -159,7 +160,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
         throw new WorkerError(403, `incorrect password for paste '${short}`)
       } else {
         return makeResponse(
-          await createPaste(env, content, isPrivate, expirationSeconds, short, date, newPasswd || passwd, filename, viewPasswd, item.metadata),
+          await createPaste(env, content, isPrivate, expirationSeconds, short, date, newPasswd || passwd, filename, viewPasswd, item.metadata, asMarkdown),
         )
       }
     }
@@ -171,7 +172,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
         throw new WorkerError(409, `name '${name}' is already used`)
     }
     return makeResponse(await createPaste(
-      env, content, isPrivate, expirationSeconds, short, undefined, newPasswd, filename, viewPasswd,
+      env, content, isPrivate, expirationSeconds, short, undefined, newPasswd, filename, viewPasswd, undefined, asMarkdown
     ))
   }
 }
