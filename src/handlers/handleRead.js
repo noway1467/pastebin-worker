@@ -5,7 +5,6 @@ import { getType } from "mime/lite.js"
 import { makeMarkdown } from "../pages/markdown.js"
 import { makeHighlight } from "../pages/highlight.js"
 import { decryptWithPassword, base64ToUint8Array } from "../crypto.js"
-import { getPasswordPage } from "../pages/password.js"
 
 function staticPageCacheHeader(env) {
   const age = env.CACHE_STATIC_PAGE_AGE
@@ -22,101 +21,9 @@ function lastModifiedHeader(paste) {
   return lastModified ? { "last-modified": new Date(lastModified).toGMTString() } : {}
 }
 
-async function renderPaste(item, content, role, mime, ext, env, url, isDecrypted) {
-    // determine filename with priority: meta only (since we removed filename from path in upload, but kept it in meta?)
-    // Actually we removed filename upload, but metadata might still have it if old or passed?
-    // In our new createPaste we kept 'filename: filename' in metadata but removed it from args?
-    // Wait, in previous handleWrite replacement I removed 'filename' from args of createPaste, and passed 'filename' as arg to createPaste which was actually 'undefined' if I removed it from args list?
-    // Let me check my previous replacement for handleWrite.
-    // I removed 'filename' from args. `async function createPaste(env, content, ...)`
-    // And in `options.metadata`, I removed `filename: filename`?
-    // Let me check the replacement string I used.
-    // I see `filename: filename` was REMOVED from `metadata`. Good.
-    // But `item.metadata?.filename` might still exist for old pastes.
-    const returnFilename = item.metadata?.filename
-
-    // handle URL redirection
-    if (role === "u") {
-        const redirectURL = decode(content)
-        if (isLegalUrl(redirectURL)) {
-            return Response.redirect(redirectURL)
-        } else {
-            throw new WorkerError(400, "cannot parse paste content as a legal URL")
-        }
-    }
-
-    // handle article (render as markdown)
-    if (role === "a") {
-        const md = makeMarkdown(decode(content))
-        return new Response(md, {
-            headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
-        })
-    }
-
-    // handle language highlight
-    const lang = url.searchParams.get("lang")
-    if (lang) {
-        return new Response(makeHighlight(decode(content), lang), {
-            headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
-        })
-    }
-
-    // handle default (not protected or decrypted)
-    const headers = { "content-type": `${mime};charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) }
-    const disp = url.searchParams.has("a") ? "attachment" : "inline"
-    
-    if (returnFilename) {
-        const encodedFilename = encodeRFC5987ValueChars(returnFilename)
-        headers["content-disposition"] = `${disp}; filename*=UTF-8''${encodedFilename}`
-    } else {
-        headers["content-disposition"] = `${disp}`
-    }
-    return new Response(content, { headers })
-}
-
-export async function handleVerifyAndRead(request, env, ctx) {
-    const url = new URL(request.url)
-    const { role, short, ext } = parsePath(url.pathname)
-
-    // Parse body as form-urlencoded to get password
-    let viewPasswd = ""
-    try {
-        const formData = await request.formData()
-        viewPasswd = formData.get('v')
-    } catch(e) {
-        // failed to parse
-    }
-
-    const item = await env.PB.getWithMetadata(short, { type: "arrayBuffer" })
-    if (item.value === null) {
-        throw new WorkerError(404, `paste of name '${short}' not found`)
-    }
-
-    let content = item.value
-    if (item.metadata?.vProtected) {
-        if (!viewPasswd) {
-             return new Response(getPasswordPage(env, "请输入密码"), {
-                headers: { "content-type": "text/html;charset=UTF-8" }
-             })
-        }
-        try {
-            const salt = base64ToUint8Array(item.metadata.vSalt)
-            const iv = base64ToUint8Array(item.metadata.vIv)
-            content = await decryptWithPassword(content, viewPasswd, salt, iv)
-        } catch (e) {
-             return new Response(getPasswordPage(env, "密码错误，请重试"), {
-                headers: { "content-type": "text/html;charset=UTF-8" }
-             })
-        }
-    }
-
-    const mime = url.searchParams.get("mime") || getType(ext) || "text/plain"
-    return renderPaste(item, content, role, mime, ext, env, url, true)
-}
-
 export async function handleGet(request, env, ctx) {
   const url = new URL(request.url)
-  const { role, short, ext, passwd } = parsePath(url.pathname)
+  const { role, short, ext, passwd, filename } = parsePath(url.pathname)
 
   if (url.pathname === "/favicon.ico" && env.FAVICON) {
     return Response.redirect(env.FAVICON)
@@ -147,6 +54,8 @@ export async function handleGet(request, env, ctx) {
     })
   }
 
+  const disp = url.searchParams.has("a") ? "attachment" : "inline"
+
   const item = await env.PB.getWithMetadata(short, { type: "arrayBuffer" })
 
   // when paste is not found
@@ -169,13 +78,62 @@ export async function handleGet(request, env, ctx) {
     }
   }
 
-  // handle view protection
+  // determine filename with priority: url path > meta
+  const returnFilename = filename || item.metadata?.filename
+
+  // handle URL redirection
+  if (role === "u") {
+    const redirectURL = decode(item.value)
+    if (isLegalUrl(redirectURL)) {
+      return Response.redirect(redirectURL)
+    } else {
+      throw new WorkerError(400, "cannot parse paste content as a legal URL")
+    }
+  }
+
+  // handle article (render as markdown)
+
+  // handle language highlight
+  const lang = url.searchParams.get("lang")
+  let content = item.value
+
+  // handle view protection: require v (view password) query parameter to decrypt
   if (item.metadata?.vProtected) {
-    // Return the password page directly
-    return new Response(getPasswordPage(env), {
-      headers: { "content-type": "text/html;charset=UTF-8" },
+    const viewPasswd = url.searchParams.get("v") || ""
+    if (viewPasswd.length === 0) {
+      throw new WorkerError(401, "view password required")
+    }
+    try {
+      const salt = base64ToUint8Array(item.metadata.vSalt)
+      const iv = base64ToUint8Array(item.metadata.vIv)
+      content = await decryptWithPassword(content, viewPasswd, salt, iv)
+    } catch (e) {
+      throw new WorkerError(403, "incorrect view password")
+    }
+  }
+
+  // handle article (render as markdown)
+  if (role === "a") {
+    const md = makeMarkdown(decode(content))
+    return new Response(md, {
+      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
     })
   }
 
-  return renderPaste(item, item.value, role, mime, ext, env, url, false)
+  // handle language highlight
+  if (lang) {
+    return new Response(makeHighlight(decode(content), lang), {
+      headers: { "content-type": `text/html;charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) },
+    })
+  }
+
+  // handle default (not protected)
+  const headers = { "content-type": `${mime};charset=UTF-8`, ...pasteCacheHeader(env), ...lastModifiedHeader(item) }
+  if (returnFilename) {
+    const encodedFilename = encodeRFC5987ValueChars(returnFilename)
+    headers["content-disposition"] = `${disp}; filename*=UTF-8''${encodedFilename}`
+  } else {
+    headers["content-disposition"] = `${disp}`
+  }
+  return new Response(content, { headers })
 }

@@ -2,7 +2,7 @@ import { WorkerError, } from "./common.js"
 
 import { handleOptions, corsWrapResponse } from "./handlers/handleCors.js"
 import { handlePostOrPut } from "./handlers/handleWrite.js"
-import { handleGet, handleVerifyAndRead } from "./handlers/handleRead.js"
+import { handleGet } from "./handlers/handleRead.js"
 import { handleDelete } from "./handlers/handleDelete.js"
 
 export default {
@@ -34,11 +34,6 @@ async function handleRequest(request, env, ctx) {
 
 async function handleNormalRequest(request, env, ctx) {
   if (request.method === "POST") {
-    // Check if it's a password verification request (x-www-form-urlencoded) and has a path (not root)
-    const url = new URL(request.url)
-    if (url.pathname !== "/" && request.headers.get("content-type")?.includes("application/x-www-form-urlencoded")) {
-      return await handleVerifyAndRead(request, env, ctx)
-    }
     return await handlePostOrPut(request, env, ctx, false)
   } else if (request.method === "GET") {
     return await handleGet(request, env, ctx)
