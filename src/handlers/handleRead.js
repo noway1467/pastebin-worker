@@ -1,6 +1,5 @@
 import { decode, encodeRFC5987ValueChars, isLegalUrl, parsePath, WorkerError } from "../common.js"
 import { getStaticPage } from "../pages/staticPages.js"
-import { getPasswordPage } from "../pages/password.js"
 import { verifyAuth } from "../auth.js"
 import { getType } from "mime/lite.js"
 import { makeMarkdown } from "../pages/markdown.js"
@@ -102,9 +101,7 @@ export async function handleGet(request, env, ctx) {
   if (item.metadata?.vProtected) {
     const viewPasswd = url.searchParams.get("v") || ""
     if (viewPasswd.length === 0) {
-      return new Response(getPasswordPage(env), {
-        headers: { "content-type": "text/html;charset=UTF-8", ...staticPageCacheHeader(env) },
-      })
+      throw new WorkerError(401, "view password required")
     }
     try {
       const salt = base64ToUint8Array(item.metadata.vSalt)
