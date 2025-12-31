@@ -286,13 +286,14 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#uploaded-expiration').prop('value', uploaded.expire)
     }
     // 若设置了查看密码，生成带 ?v= 的便捷复制链接
+    // 若设置了查看密码，不再生成带 ?v= 的便捷复制链接
     if (viewPasswd && viewPasswd.length > 0) {
-      $('#uploaded-url-with-v').prop('value', `${uploaded.url}?v=${encodeURIComponent(viewPasswd)}`)
+      $('#uploaded-url-with-v').prop('value', '')
       if (uploaded.suggestUrl) {
-        $('#uploaded-suggest-url-with-v').prop('value', `${uploaded.suggestUrl}?v=${encodeURIComponent(viewPasswd)}`)
+        $('#uploaded-suggest-url-with-v').prop('value', '')
       }
       // 生成带查看密码的管理链接
-      $('#uploaded-admin-url-with-v').prop('value', `${uploaded.admin}?v=${encodeURIComponent(viewPasswd)}`)
+      $('#uploaded-admin-url-with-v').prop('value', '')
     } else {
       $('#uploaded-url-with-v').prop('value', '')
       $('#uploaded-suggest-url-with-v').prop('value', '')
