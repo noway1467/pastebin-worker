@@ -1,5 +1,5 @@
-
-export function getPasswordPage(env) {
+export function getPasswordPage(env, error) {
+    const errorHtml = error ? `<p style="color: var(--color-red); margin-bottom: 1rem; font-size: 14px;">${error}</p>` : '';
     return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -9,11 +9,12 @@ export function getPasswordPage(env) {
     <style>
         :root {
             --color-bg: #ffffff;
-            --color-bg-secondary: #f9f9f9;
+            --color-bg-secondary: #f6f8fa;
             --color-green: #2ea44f;
             --color-green-hover: #2c974b;
             --color-text: #24292e;
             --color-border: #eaeaea;
+            --color-red: #d73a49;
         }
         body {
             display: flex;
@@ -27,11 +28,11 @@ export function getPasswordPage(env) {
         .container {
             background: var(--color-bg);
             padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             text-align: center;
             width: 100%;
-            max-width: 320px;
+            max-width: 300px;
             border: 1px solid var(--color-border);
         }
         h3 {
@@ -42,14 +43,14 @@ export function getPasswordPage(env) {
         }
         input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             margin-bottom: 16px;
             border: 1px solid #ddd;
             border-radius: 6px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 14px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus {
             border-color: var(--color-green);
@@ -57,14 +58,14 @@ export function getPasswordPage(env) {
         }
         button {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background-color: var(--color-green);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
             transition: background-color 0.2s;
         }
         button:hover {
@@ -87,7 +88,8 @@ export function getPasswordPage(env) {
 <body>
     <div class="container">
         <h3>🔒 加密内容</h3>
-        <form method="GET">
+        ${errorHtml}
+        <form method="POST">
             <input type="password" name="v" placeholder="输入查看密码" required autofocus autocomplete="off">
             <button type="submit">解锁访问</button>
         </form>

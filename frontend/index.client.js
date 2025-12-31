@@ -47,26 +47,13 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const formatSize = (size) => {
-    if (!size) return '0'
-    if (size < 1024) {
-      return `${size} Bytes`
-    } else if (size < 1024 * 1024) {
-      return `${(size / 1024).toFixed(2)} KB`
-    } else if (size < 1024 * 1024 * 1024) {
-      return `${(size / 1024 / 1024).toFixed(2)} MB`
-    } else {
-      return `${(size / 1024 / 1024 / 1024).toFixed(2)} GB`
-    }
-  }
-
   // monitor input changes and enable/disable submit button
   let urlType = $('input[name="url-type"]:checked').val()
   let inputType = 'edit'
   let expiration = $('#paste-expiration-input').val()
   let passwd = ''
   let viewPasswd = ''
-  let customName = '', adminUrl = '', file = null
+  let customName = '', adminUrl = ''
 
   const NAME_REGEX = /^[a-zA-Z0-9+_\-\[\]*$@,;]{3,}$/
   const EXPIRE_REGEX = /^\d+\s*[smhdwMY]?$/
@@ -81,9 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateButtons() {
-    const pasteNotEmpty = inputType === 'edit'
-      ? pasteEditArea.prop('value').length > 0
-      : file !== null
+    const pasteNotEmpty = pasteEditArea.prop('value').length > 0
     let expirationValid = EXPIRE_REGEX.test(expiration)  // TODO: verify it
     if (!expiration) {
       expirationValid = true
@@ -124,41 +109,18 @@ window.addEventListener('DOMContentLoaded', () => {
   updateButtons()
 
   function updateTabBar() {
-    if (inputType === 'file') {
-      $('#paste-tab-edit').removeClass('enabled')
-      $('#paste-tab-preview').removeClass('enabled')
-      $('#paste-tab-file').addClass('enabled')
-      $('#paste-file-show').addClass('enabled')
-      $('#paste-edit').removeClass('enabled')
-      $('#paste-preview').removeClass('enabled')
-    } else if (inputType === 'edit') {
-      $('#paste-tab-file').removeClass('enabled')
+    if (inputType === 'edit') {
       $('#paste-tab-preview').removeClass('enabled')
       $('#paste-tab-edit').addClass('enabled')
       $('#paste-edit').addClass('enabled')
-      $('#paste-file-show').removeClass('enabled')
       $('#paste-preview').removeClass('enabled')
     } else if (inputType === 'preview') {
-      $('#paste-tab-file').removeClass('enabled')
       $('#paste-tab-edit').removeClass('enabled')
       $('#paste-tab-preview').addClass('enabled')
       $('#paste-preview').addClass('enabled')
       $('#paste-edit').removeClass('enabled')
-      $('#paste-file-show').removeClass('enabled')
     }
   }
- 
-  $('#paste-tab-file').on('input', event => {
-    const files = event.target.files
-    if (files.length === 0) return
-    file = files[0]
-    inputType = 'file'
-    updateButtons()
-    updateTabBar()
-    const fileLine = $('#paste-file-line')
-    fileLine.children('.file-name').text(file.name)
-    fileLine.children('.file-size').text(formatSize(file.size))
-  })
  
   $('#paste-tab-edit').on('click', () => {
     inputType = 'edit'
@@ -228,13 +190,9 @@ window.addEventListener('DOMContentLoaded', () => {
   function putPaste() {
     prepareUploading()
     let fd = new FormData()
-    if (inputType === 'file') {
-      fd.append('c', file)
-    } else {
-      const content = pasteEditArea.prop('value')
-      const encodedContent = new TextEncoder().encode(content)
-      fd.append('c', new Blob([encodedContent]))
-    }
+    const content = pasteEditArea.prop('value')
+    const encodedContent = new TextEncoder().encode(content)
+    fd.append('c', new Blob([encodedContent]))
 
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)
@@ -257,13 +215,9 @@ window.addEventListener('DOMContentLoaded', () => {
   function postPaste() {
     prepareUploading()
     let fd = new FormData()
-    if (inputType === 'file') {
-      fd.append('c', file)
-    } else {
-      const content = pasteEditArea.prop('value')
-      const encodedContent = new TextEncoder().encode(content)
-      fd.append('c', new Blob([encodedContent]))
-    }
+    const content = pasteEditArea.prop('value')
+    const encodedContent = new TextEncoder().encode(content)
+    fd.append('c', new Blob([encodedContent]))
 
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)

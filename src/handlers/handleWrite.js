@@ -12,7 +12,7 @@ import {
   WorkerError,
 } from "../common.js"
 
-async function createPaste(env, content, isPrivate, expire, short, createDate, passwd, filename, viewPasswd, existingMeta, asMarkdown) {
+async function createPaste(env, content, isPrivate, expire, short, createDate, passwd, viewPasswd, existingMeta, asMarkdown) {
   const now = new Date().toISOString()
   createDate = createDate || now
   passwd = (passwd && passwd.length > 0) ? passwd : genRandStr(params.ADMIN_PATH_LEN)
@@ -30,7 +30,6 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
     metadata: {
       postedAt: createDate,
       passwd: passwd,
-      filename: filename,
       lastModified: now,
       asMarkdown: asMarkdown,
     },
@@ -61,17 +60,15 @@ async function createPaste(env, content, isPrivate, expire, short, createDate, p
   const adminUrl = env.BASE_URL + "/" + short + params.SEP + passwd
   return {
     url: accessUrl,
-    suggestUrl: suggestUrl(content, filename, short, env.BASE_URL, asMarkdown),
+    suggestUrl: suggestUrl(content, short, env.BASE_URL, asMarkdown),
     admin: adminUrl,
     isPrivate: isPrivate,
     expire: expire || null,
   }
 }
 
-function suggestUrl(content, filename, short, baseUrl, asMarkdown) {
-  if (filename) {
-    return `${baseUrl}/${short}/${filename}`
-  } else if (isLegalUrl(decode(content))) {
+function suggestUrl(content, short, baseUrl, asMarkdown) {
+  if (isLegalUrl(decode(content))) {
     return `${baseUrl}/u/${short}`
   } else if (asMarkdown) {
     return `${baseUrl}/a/${short}`
@@ -106,7 +103,6 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
     throw new WorkerError(400, `bad usage, please use 'multipart/form-data' instead of ${contentType}`)
   }
   const content = form.get("c") && form.get("c").content
-  const filename = form.get("c") && getDispFilename(form.get("c").fields)
   const name = form.get("n") && decode(form.get("n").content)
   const isPrivate = form.get("p") !== undefined
   const asMarkdown = form.has("m")
@@ -161,7 +157,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
         throw new WorkerError(403, `incorrect password for paste '${short}`)
       } else {
         return makeResponse(
-          await createPaste(env, content, isPrivate, expirationSeconds, short, date, newPasswd || passwd, filename, viewPasswd, item.metadata, asMarkdown),
+          await createPaste(env, content, isPrivate, expirationSeconds, short, date, newPasswd || passwd, viewPasswd, item.metadata, asMarkdown),
         )
       }
     }
@@ -173,7 +169,7 @@ export async function handlePostOrPut(request, env, ctx, isPut) {
         throw new WorkerError(409, `name '${name}' is already used`)
     }
     return makeResponse(await createPaste(
-      env, content, isPrivate, expirationSeconds, short, undefined, newPasswd, filename, viewPasswd, undefined, asMarkdown
+      env, content, isPrivate, expirationSeconds, short, undefined, newPasswd, viewPasswd, undefined, asMarkdown
     ))
   }
 }
