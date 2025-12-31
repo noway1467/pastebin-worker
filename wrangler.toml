@@ -1,0 +1,45 @@
+name = "pb"
+compatibility_date = "2023-01-28"
+compatibility_flags = [ "nodejs_compat" ]
+
+workers_dev = false
+main = "src/index.js"
+
+rules = [
+  { type = "Text", globs = [ "*/frontend/**", "*/doc/**" ], fallthrough = true }
+]
+
+#----------------------------------------
+# lines below are what you should modify
+#----------------------------------------
+
+[[routes]]
+# Refer to https://developers.cloudflare.com/workers/wrangler/configuration/#routes
+pattern = "1yun.dpdns.org"
+custom_domain = true
+
+[[kv_namespaces]]
+binding = "PB"  # do not touch this
+id = "f4564dbb9d2047378069f55fcde60192"  # id of your KV namespace
+
+[vars]
+# must be consistent with your routes
+BASE_URL = "https://1yun.dpdns.org"
+
+# url to repo, displayed in the index page
+REPO = "https://github.com/noway1467/pastebin-worker"
+
+# url to the favicon
+FAVICON = "https://cdn.jsdelivr.net/gh/noway1467/pastebin-worker@main/frontend/favicon-32x32.png"
+
+# the name displayed in TOS
+TOS_MAINTAINER = "Sharzy"
+
+# the email displayed in TOS
+TOS_MAIL = "pb@shz.al"
+
+# Cache-Control max-age for static pages
+CACHE_STATIC_PAGE_AGE = 7200
+
+# Cache-Control max-age for static pages
+CACHE_PASTE_AGE = 600
