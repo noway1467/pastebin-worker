@@ -5,7 +5,7 @@ export function getPasswordPage(env) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>需要密码 - 零落工具箱</title>
+    <title>需要密码</title>
     <style>
         :root {
             --color-bg: #ffffff;
@@ -92,7 +92,7 @@ export function getPasswordPage(env) {
             <button type="submit">解锁访问</button>
         </form>
         <div class="footer">
-            <a href="/">零落工具箱</a>
+            <a href="/">返回首页</a>
         </div>
     </div>
 </body>

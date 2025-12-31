@@ -352,9 +352,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
       function loadPasteForAdmin() {
         let url = "/" + short
-        if (viewPasswd && viewPasswd.length > 0) {
-          url += `?v=${encodeURIComponent(viewPasswd)}`
-        }
         $.ajax({
           url,
           success: paste => {
