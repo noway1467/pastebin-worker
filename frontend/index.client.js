@@ -47,8 +47,18 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // const formatSize = (size) => { ... } // removed
-
+  const formatSize = (size) => {
+    if (!size) return '0'
+    if (size < 1024) {
+      return `${size} Bytes`
+    } else if (size < 1024 * 1024) {
+      return `${(size / 1024).toFixed(2)} KB`
+    } else if (size < 1024 * 1024 * 1024) {
+      return `${(size / 1024 / 1024).toFixed(2)} MB`
+    } else {
+      return `${(size / 1024 / 1024 / 1024).toFixed(2)} GB`
+    }
+  }
 
   // monitor input changes and enable/disable submit button
   let urlType = $('input[name="url-type"]:checked').val()
@@ -57,7 +67,6 @@ window.addEventListener('DOMContentLoaded', () => {
   let passwd = ''
   let viewPasswd = ''
   let customName = '', adminUrl = ''
-
 
   const NAME_REGEX = /^[a-zA-Z0-9+_\-\[\]*$@,;]{3,}$/
   const EXPIRE_REGEX = /^\d+\s*[smhdwMY]?$/
@@ -73,7 +82,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function updateButtons() {
     const pasteNotEmpty = pasteEditArea.prop('value').length > 0
-
     let expirationValid = EXPIRE_REGEX.test(expiration)  // TODO: verify it
     if (!expiration) {
       expirationValid = true
@@ -127,7 +135,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // File input listeners removed
 
 
   $('#paste-tab-edit').on('click', () => {
@@ -202,7 +209,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const encodedContent = new TextEncoder().encode(content)
     fd.append('c', new Blob([encodedContent]))
 
-
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
@@ -228,13 +234,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const encodedContent = new TextEncoder().encode(content)
     fd.append('c', new Blob([encodedContent]))
 
-
     if (expiration.length > 0) fd.append('e', expiration)
     if (passwd.length > 0) fd.append('s', passwd)
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
     if ($('#paste-as-markdown-checkbox').prop('checked')) fd.append('m', 'true')
 
-    if (urlType === 'long') fd.append('p', 'true')
     if (urlType === 'custom') fd.append('n', customName)
 
     $.post({
@@ -281,16 +285,14 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#uploaded-expiration').prop('value', uploaded.expire)
     }
     // 若设置了查看密码，生成带 ?v= 的便捷复制链接
+    // 若设置了查看密码，不再生成带 ?v= 的便捷复制链接
     if (viewPasswd && viewPasswd.length > 0) {
-      // v2: 移除URL中的 ?v=, 前端在查看时会自动处理 cookies 或输入框
-      // 但这里为了方便用户复制，我们生成的连接可以不带 v，但提示用户需要密码
-      // 用户需求是: "网址不要带有查看密码参数"
-      // 管理链接的查看功能是 AJAX 来的，需要特殊处理
-      $('#uploaded-url-with-v').prop('value', uploaded.url) // 不带 v
+      $('#uploaded-url-with-v').prop('value', '')
       if (uploaded.suggestUrl) {
-        $('#uploaded-suggest-url-with-v').prop('value', uploaded.suggestUrl)
+        $('#uploaded-suggest-url-with-v').prop('value', '')
       }
-      $('#uploaded-admin-url-with-v').prop('value', uploaded.admin) // 不带 v，admin面板里有输入框
+      // 生成带查看密码的管理链接
+      $('#uploaded-admin-url-with-v').prop('value', '')
     } else {
       $('#uploaded-url-with-v').prop('value', '')
       $('#uploaded-suggest-url-with-v').prop('value', '')
@@ -349,29 +351,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
       function loadPasteForAdmin() {
         let url = "/" + short
-        // if (viewPasswd && viewPasswd.length > 0) {
-        //   url += `?v=${encodeURIComponent(viewPasswd)}`
-        // }  // 后端现在优先检查 header 或 returned 401，这里不再在URL里拼接 v，而是依靠 header 里的 viewPasswd (Wait, this is GET request, usually we put params in URL. But we can also set headers)
-
-        // 我们已经在 backend handleRead 里改了： check param v OR cookie.
-        // As an admin editor, we can just send the 'v' query param if we have it, to avoid cookie reliance inside the editor logic?
-        // But user said "网址不要带有查看密码参数". This applies to the visited URL.
-        // For internal AJAX to fetch content, we can use query param IF we want, OR we can use the same cookie mechanism.
-        // Let's stick to using `v` param for the API call to ensure it works, OR headers. 
-        // Backend `handleRead.js` modification I made checks query param "v" first.
-        // So for the EDITOR, let's keep sending `?v=...` in the background AJAX call? 
-        // User Requirement: "网址不要带有查看密码参数" usually refers to the address bar.
-        // So keeping it in AJAX is fine. BUT, let's try to align with the plan: use `X-Client-Type`.
-
-        if (viewPasswd && viewPasswd.length > 0) {
-          url += `?v=${encodeURIComponent(viewPasswd)}`
-        }
-
         $.ajax({
           url,
-          headers: {
-            "X-Client-Type": "web-editor"
-          },
           success: paste => {
             pasteEditArea.val(paste)
             updateButtons()

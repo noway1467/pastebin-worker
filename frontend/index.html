@@ -6,18 +6,15 @@
     <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
     <link rel='icon' href='{{FAVICON}}' type='image/png' />
     <style media='screen'>
-        {
-                {
-                CSS
-            }
-        }
+        {{CSS}}
     </style>
 </head>
 <html lang='zh-CN'>
 
 <body>
     <div class='px-2 my-1 markdown-body'>
-        <h1><a href='index.html'>在线剪切板</a></h1>
+        <h2 class="text-center my-3"><a href='index.html'
+                style="color: var(--color-text); text-decoration: none;">在线剪切板</a></h2>
 
         <div id='main-panels' class='panels'>
             <div id='paste-input-panel'>
@@ -26,97 +23,87 @@
                         <div class="paste-tab enabled" id='paste-tab-edit'>编辑文本</div>
                         <div class="paste-tab" id='paste-tab-preview'>预览</div>
                     </div>
-                    <div></div>
                 </div>
-                <div class="paste-tab-page enabled" id='paste-edit'>
-                    <textarea placeholder='在此输入内容' id='paste-textarea' name='c' rows='20'></textarea>
-                </div>
-                <div class="paste-tab-page" id='paste-preview'>
-                    <div id="preview-content" class="markdown-body" style="padding: 1em;"></div>
-                </div>
+                <div></div>
             </div>
-
-            <div id='paste-setting-panel'>
-                <h3>设置</h3>
-                <div id='paste-expiration-panel' class='paste-setting-subitem-panel'>
-                    <input list='expiration-choices' type='text' min='60' step='1' name='paste-expiration'
-                        id='paste-expiration-input' placeholder='过期时间（秒）' value='7M'>
-                    <label class='small-label' for='paste-expiration-input'>在一段时间后自动删除（留空则不删除）。<br>单位：s 秒，m 分，h 时，d 天，M
-                        月，Y 年</label>
-                </div>
-                <div id='paste-view-passwd-panel' class='paste-setting-subitem-panel'>
-                    <input type='text' spellcheck='false' id='paste-view-passwd-input' placeholder='查看密码（可选）'>
-                    <label class='small-label' for='paste-view-passwd-input'>查看密码：访问时需在URL查询参数中携带 v=密码 才能查看内容。</label>
-                </div>
-                <div id='paste-passwd-panel' class='paste-setting-subitem-panel'>
-                    <input type='text' spellcheck='false' name='paste-expiration' id='paste-passwd-input'
-                        placeholder='管理密码'>
-                    <label class='small-label' for='paste-passwd-input'>管理密码：用于删除/更新页面。不填则随机生成。</label>
-                </div>
-                <div class='label-line'>
-                    <input type='checkbox' id='paste-as-markdown-checkbox'>
-                    <label for='paste-as-markdown-checkbox' class='radio-label'>渲染为 Markdown</label>
-                </div>
-                <div class='label-line'>
-                    <input type='radio' name='url-type' value='short' id='paste-url-short-radio' checked>
-                    <label for='paste-url-short-radio' class='radio-label'>生成短随机链接</label>
-                    <span class='small-label'>示例：{{BASE_URL}}/BxWH</span>
-                </div>
-                <div class='label-line'>
-                    <input type='radio' name='url-type' value='long' id='paste-url-long-radio'>
-                    <label for='paste-url-long-radio' class='radio-label'>生成长随机链接</label>
-                    <span class='small-label'>示例：{{BASE_URL}}/5HQWYNmjA4h44SmybeThXXAm</span>
-                </div>
-                <div class='label-line'>
-                    <input type='radio' name='url-type' value='custom' id='paste-url-custom-radio'>
-                    <label for='paste-url-custom-radio' class='radio-label'>自定义URL</label>
-                    <div id='paste-url-input-wrapper'>
-                        <span id='paste-url-input-prefix'>{{BASE_URL}}/</span>
-                        <input type='text' id='paste-custom-url-input' minlength='3' name='custom-url'>
-                    </div>
-                    <span class='small-label'>示例：{{BASE_URL}}/stocking</span>
-                </div>
-                <div class='label-line'>
-                    <input type='radio' name='url-type' value='admin' id='paste-url-admin-radio'>
-                    <label for='paste-url-admin-radio' class='radio-label'>更新页面</label>
-                    <input type='url' spellcheck='false' id='paste-admin-url-input' name='admin-url'
-                        value='{{BASE_URL}}'>
-                </div>
-                <div>
-                    <button id='submit-button' class='long-button px-3 py-2 my-1'>上传</button>
-                    <button id='delete-button' class='long-button hidden px-3 py-2 my-1'>删除</button>
-                    <span id='submit-error-msg'></span>
-                </div>
-
-                <div id='paste-uploaded-panel' class='hidden'>
-                    <h2>上传结果</h2>
-                    <div class='uploaded-entry'>
-                        <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
-                        <button class='copy-button'>复制</button>
-                    </div>
-                    <label for='uploaded-url' class='small-label'>普通链接：只读</label>
-                    <div class='uploaded-entry'>
-                        <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
-                        <button class='copy-button'>复制</button>
-                    </div>
-                    <label for='suggest-url' class='small-label'>编辑链接：可以修改页面内容和设置</label>
-                    <div class='uploaded-entry'>
-                        <input id='uploaded-url-with-v' type='text' class='uploaded-table-text' readonly>
-                        <button class='copy-button'>复制</button>
-                    </div>
-                    <label for='uploaded-url-with-v' class='small-label'>加密链接：需要密码才能查看</label>
-                    <div class='uploaded-entry'>
-                        <input id='uploaded-admin-url-with-v' type='text' class='uploaded-table-text' readonly>
-                        <button class='copy-button'>复制</button>
-                    </div>
-                    <label for='uploaded-admin-url-with-v' class='small-label'>管理链接（包含以上两者）</label>
-                    <div class='uploaded-entry'>
-                        <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
-                    </div>
-                    <label for='uploaded-expiration' class='small-label'>过期时间（秒）</label>
-                </div>
+            <div class="paste-tab-page enabled" id='paste-edit'>
+                <textarea placeholder='在此输入内容' id='paste-textarea' name='c' rows='20'></textarea>
+            </div>
+            <div class="paste-tab-page" id='paste-preview'>
+                <div id="preview-content" class="markdown-body" style="padding: 1em;"></div>
+            </div>
+            <div class="paste-tab-page" id='paste-preview'>
+                <div id="preview-content" class="markdown-body" style="padding: 1em;"></div>
             </div>
         </div>
+
+        <div id='paste-setting-panel'>
+            <h3>设置</h3>
+            <div id='paste-expiration-panel' class='paste-setting-subitem-panel'>
+                <input list='expiration-choices' type='text' min='60' step='1' name='paste-expiration'
+                    id='paste-expiration-input' placeholder='过期时间(秒)' value='7M'>
+                <label class='small-label' for='paste-expiration-input'>自动删除时间(留空永不过期)。<br>单位：s=秒, m=分, h=时, d=天, M=月,
+                    Y=年</label>
+            </div>
+            <div id='paste-view-passwd-panel' class='paste-setting-subitem-panel'>
+                <input type='text' spellcheck='false' id='paste-view-passwd-input' placeholder='查看密码(可选)'>
+                <label class='small-label' for='paste-view-passwd-input'>访问时需输入密码才可查看内容</label>
+            </div>
+            <div id='paste-passwd-panel' class='paste-setting-subitem-panel'>
+                <input type='text' spellcheck='false' name='paste-expiration' id='paste-passwd-input'
+                    placeholder='管理密码'>
+                <label class='small-label' for='paste-passwd-input'>用于修改/删除 (留空随机生成)</label>
+            </div>
+            <div class='label-line'>
+                <input type='checkbox' id='paste-as-markdown-checkbox'>
+                <label for='paste-as-markdown-checkbox' class='radio-label'>渲染为 Markdown</label>
+            </div>
+            <div class='label-line'>
+                <input type='radio' name='url-type' value='short' id='paste-url-short-radio' checked>
+                <label for='paste-url-short-radio' class='radio-label'>随机短链接</label>
+                <span class='small-label'>例：{{BASE_URL}}/BxWH</span>
+            </div>
+
+            <div class='label-line'>
+                <input type='radio' name='url-type' value='custom' id='paste-url-custom-radio'>
+                <label for='paste-url-custom-radio' class='radio-label'>自定义URL</label>
+                <div id='paste-url-input-wrapper'>
+                    <span id='paste-url-input-prefix'>{{BASE_URL}}/</span>
+                    <input type='text' id='paste-custom-url-input' minlength='3' name='custom-url'>
+                </div>
+                <span class='small-label'>例：{{BASE_URL}}/stocking</span>
+            </div>
+            <div class='label-line'>
+                <input type='radio' name='url-type' value='admin' id='paste-url-admin-radio'>
+                <label for='paste-url-admin-radio' class='radio-label'>管理模式</label>
+                <input type='url' spellcheck='false' id='paste-admin-url-input' name='admin-url' value='{{BASE_URL}}'>
+            </div>
+            <div>
+                <button id='submit-button' class='long-button px-3 py-2 my-1'>上传</button>
+                <button id='delete-button' class='long-button hidden px-3 py-2 my-1'>删除</button>
+                <span id='submit-error-msg'></span>
+            </div>
+
+            <div id='paste-uploaded-panel' class='hidden'>
+                <h2>上传结果</h2>
+                <div class='uploaded-entry'>
+                    <input id='uploaded-url' type='text' class='uploaded-table-text' readonly>
+                    <button class='copy-button'>复制</button>
+                </div>
+                <label for='uploaded-url' class='small-label'>访问链接 (只读)</label>
+                <div class='uploaded-entry'>
+                    <input id='uploaded-admin-url' type='text' class='uploaded-table-text' readonly>
+                    <button class='copy-button'>复制</button>
+                </div>
+                <label for='suggest-url' class='small-label'>管理链接 (可编辑/删除/设置)</label>
+
+                <div class='uploaded-entry'>
+                    <input type='text' id='uploaded-expiration' class='uploaded-table-text' readonly>
+                </div>
+                <label for='uploaded-expiration' class='small-label'>过期时间</label>
+            </div>
+        </div>
+    </div>
 
     </div>
     <footer class='px-3 my-2 text-center'>
