@@ -147,7 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#paste-file-show').removeClass('enabled')
     }
   }
- 
+
   $('#paste-tab-file').on('input', event => {
     const files = event.target.files
     if (files.length === 0) return
@@ -159,20 +159,20 @@ window.addEventListener('DOMContentLoaded', () => {
     fileLine.children('.file-name').text(file.name)
     fileLine.children('.file-size').text(formatSize(file.size))
   })
- 
+
   $('#paste-tab-edit').on('click', () => {
     inputType = 'edit'
     updateButtons()
     updateTabBar()
   })
- 
+
   $('#paste-tab-preview').on('click', () => {
     inputType = 'preview'
     updateButtons()
     updateTabBar()
     $('#preview-content').html(marked.parse(pasteEditArea.val()))
   })
- 
+
   pasteEditArea.on('input', () => {
     updateButtons()
     if (inputType === 'preview') {
@@ -270,7 +270,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
     if ($('#paste-as-markdown-checkbox').prop('checked')) fd.append('m', 'true')
 
-    if (urlType === 'long') fd.append('p', 'true')
+    // 已移除长随机链接功能
     if (urlType === 'custom') fd.append('n', customName)
 
     $.post({
@@ -316,19 +316,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (uploaded.expire) {
       $('#uploaded-expiration').prop('value', uploaded.expire)
     }
-    // 若设置了查看密码，生成带 ?v= 的便捷复制链接
-    if (viewPasswd && viewPasswd.length > 0) {
-      $('#uploaded-url-with-v').prop('value', `${uploaded.url}?v=${encodeURIComponent(viewPasswd)}`)
-      if (uploaded.suggestUrl) {
-        $('#uploaded-suggest-url-with-v').prop('value', `${uploaded.suggestUrl}?v=${encodeURIComponent(viewPasswd)}`)
-      }
-      // 生成带查看密码的管理链接
-      $('#uploaded-admin-url-with-v').prop('value', `${uploaded.admin}?v=${encodeURIComponent(viewPasswd)}`)
-    } else {
-      $('#uploaded-url-with-v').prop('value', '')
-      $('#uploaded-suggest-url-with-v').prop('value', '')
-      $('#uploaded-admin-url-with-v').prop('value', '')
-    }
+    // 查看密码功能已改为访问时输入密码框，不再在URL中携带密码参数
     updateButtons()
   }
 

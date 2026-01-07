@@ -5,6 +5,7 @@ import { getType } from "mime/lite.js"
 import { makeMarkdown } from "../pages/markdown.js"
 import { makeHighlight } from "../pages/highlight.js"
 import { decryptWithPassword, base64ToUint8Array } from "../crypto.js"
+import { getPasswordPage } from "../pages/password.js"
 
 function staticPageCacheHeader(env) {
   const age = env.CACHE_STATIC_PAGE_AGE
@@ -97,18 +98,36 @@ export async function handleGet(request, env, ctx) {
   const lang = url.searchParams.get("lang")
   let content = item.value
 
-  // handle view protection: require v (view password) query parameter to decrypt
+  // handle view protection: require password input form to decrypt
   if (item.metadata?.vProtected) {
-    const viewPasswd = url.searchParams.get("v") || ""
+    // 优先从POST表单获取密码，其次从URL参数（兼容管理页面内部请求）
+    let viewPasswd = ""
+    if (request.method === "POST") {
+      try {
+        const formData = await request.formData()
+        viewPasswd = formData.get("v") || ""
+      } catch (e) {
+        viewPasswd = ""
+      }
+    } else {
+      viewPasswd = url.searchParams.get("v") || ""
+    }
+
     if (viewPasswd.length === 0) {
-      throw new WorkerError(401, "view password required")
+      // 显示密码输入页面
+      return new Response(getPasswordPage(env, null), {
+        headers: { "content-type": "text/html;charset=UTF-8" },
+      })
     }
     try {
       const salt = base64ToUint8Array(item.metadata.vSalt)
       const iv = base64ToUint8Array(item.metadata.vIv)
       content = await decryptWithPassword(content, viewPasswd, salt, iv)
     } catch (e) {
-      throw new WorkerError(403, "incorrect view password")
+      // 密码错误，显示错误提示
+      return new Response(getPasswordPage(env, "密码错误，请重试"), {
+        headers: { "content-type": "text/html;charset=UTF-8" },
+      })
     }
   }
 
