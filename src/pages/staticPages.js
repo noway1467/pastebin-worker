@@ -7,12 +7,14 @@ import tosMd from "../../frontend/tos.md"
 import apiMd from "../../doc/api.md"
 
 function indexPage(env) {
+  const deployDate = new Date().toISOString()
   return indexHtml
     .replace("{{CSS}}", styleCss)
     .replace("{{INDEX_JS}}", indexJs)
     .replaceAll("{{BASE_URL}}", env.BASE_URL)
-    .replaceAll("{{REPO}}", env.REPO)
-    .replaceAll("{{FAVICON}}", env.FAVICON)
+    .replaceAll("{{REPO}}", env.REPO || "")
+    .replaceAll("{{FAVICON}}", env.FAVICON || "")
+    .replaceAll("{{DEPLOY_DATE}}", deployDate)
 }
 
 export function getStaticPage(path, env) {
