@@ -30,7 +30,7 @@ export async function handleGet(request, env, ctx) {
     return Response.redirect(env.FAVICON)
   }
 
-  // return the editor for admin URL
+  // return the editor for admin URL (has passwd in path)
   const staticPageContent = getStaticPage((passwd.length > 0) ? "/" : url.pathname, env)
   if (staticPageContent) {
     // access to all static pages requires auth
@@ -41,6 +41,11 @@ export async function handleGet(request, env, ctx) {
     return new Response(staticPageContent, {
       headers: { "content-type": "text/html;charset=UTF-8", ...staticPageCacheHeader(env) },
     })
+  }
+
+  // If no short name, this is not a paste request
+  if (!short) {
+    throw new WorkerError(404, "not found")
   }
 
   const mime = url.searchParams.get("mime") || getType(ext) || "text/plain"
@@ -96,7 +101,7 @@ export async function handleGet(request, env, ctx) {
   const lang = url.searchParams.get("lang")
   let content = item.value
 
-  // handle view protection: show password page if protected and no valid password provided
+  // handle view protection: check if password is required
   if (item.metadata?.vProtected) {
     const viewPasswd = url.searchParams.get("v") || ""
     

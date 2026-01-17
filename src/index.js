@@ -1,4 +1,4 @@
-import { WorkerError, parsePath } from "./common.js"
+import { WorkerError } from "./common.js"
 
 import { handleOptions, corsWrapResponse } from "./handlers/handleCors.js"
 import { handlePostOrPut } from "./handlers/handleWrite.js"
@@ -33,25 +33,7 @@ async function handleRequest(request, env, ctx) {
 }
 
 async function handleNormalRequest(request, env, ctx) {
-  const url = new URL(request.url)
-  const { short, passwd } = parsePath(url.pathname)
-  
   if (request.method === "POST") {
-    const contentType = request.headers.get("content-type") || ""
-    
-    // Check if this is a password verification POST (simple form, not multipart)
-    if (contentType.includes("application/x-www-form-urlencoded") && short && !passwd) {
-      // This is a password form submission for viewing protected content
-      const formData = await request.formData()
-      const viewPasswd = formData.get("v") || ""
-      
-      // Redirect to the same URL with password as query parameter
-      const redirectUrl = new URL(request.url)
-      redirectUrl.searchParams.set("v", viewPasswd)
-      return Response.redirect(redirectUrl.toString(), 303)
-    }
-    
-    // Otherwise, it's a paste creation POST
     return await handlePostOrPut(request, env, ctx, false)
   } else if (request.method === "GET") {
     return await handleGet(request, env, ctx)
