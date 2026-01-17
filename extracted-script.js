@@ -1,4 +1,5 @@
-const SEP = ':'
+﻿
+    const SEP = ':'
 
 function parsePath(pathname) {
   let role = "", ext = ""
@@ -19,23 +20,8 @@ function parsePath(pathname) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  // 清除 URL 中的 ?v= 参数（如果存在）
-  const currentUrl = new URL(location.href)
-  const vParam = currentUrl.searchParams.get('v')
-  if (vParam) {
-    // 保存到 sessionStorage
-    const pathParts = location.pathname.split(':')
-    const short = pathParts[0].substring(1) // 去掉开头的 /
-    if (short) {
-      sessionStorage.setItem(`vp_${short}`, vParam)
-    }
-    // 立即清除 URL 参数
-    currentUrl.searchParams.delete('v')
-    history.replaceState(null, '', currentUrl.toString())
-  }
-
-  const base_url = '{{BASE_URL}}'
-  const deploy_date = new Date('{{DEPLOY_DATE}}')
+  const base_url = 'http://localhost:8787'
+  const deploy_date = new Date('2026-01-17T15:00:28.563Z')
 
   function getDateString(date) {
     const year = date.getFullYear()
@@ -109,11 +95,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!pasteNotEmpty) {
       disableSubmitButton('Paste is empty')
     } else if (!expirationValid) {
-      disableSubmitButton(`Expiration "${expiration}" not valid`)
+      disableSubmitButton(`Expiration �?{expiration}�?not valid`)
     } else if (!nameValid) {
       disableSubmitButton(`The customized URL should satisfy regex ${NAME_REGEX}`)
     } else if (!adminUrlValid) {
-      disableSubmitButton(`Admin URL "${adminUrl}" not valid`)
+      disableSubmitButton(`Admin URL �?{adminUrl}�?not valid`)
     } else {
       submitButton.addClass('enabled')
       submitErrMsg.text('')
@@ -132,7 +118,7 @@ window.addEventListener('DOMContentLoaded', () => {
       submitButton.prop('title', '')
     } else {
       deleteButton.removeClass('enabled')
-      submitErrMsg.text(`The admin URL should start with "${base_url}" and contain a colon`)
+      submitErrMsg.text(`The admin URL should start with �?{base_url}�?and contain a colon`)
     }
   }
 
@@ -366,25 +352,15 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#paste-admin-url-input').val(location.href)
       urlType = 'admin'
       adminUrl = location.href
-      // 自动填充管理密码输入框
-      $('#paste-passwd-input').val(passwd)
+      // 自动填充管理密码输入�?      $('#paste-passwd-input').val(passwd)
       // 同步内存中的密码变量
       $("#paste-passwd-input").trigger('input')
 
-      // 优先从 sessionStorage 获取查看密码
-      const storedViewPasswd = sessionStorage.getItem(`vp_${short}`) || ''
-      if (storedViewPasswd.length > 0) {
-        viewPasswd = storedViewPasswd
-        $('#paste-view-passwd-input').val(storedViewPasswd)
-      }
-      
-      // 如果 URL 上有 ?v= 参数，也保存（但这应该已经被清除了）
-      const params = new URLSearchParams(location.search)
+      // 如果 URL 上自�??v=，优先使�?      const params = new URLSearchParams(location.search)
       const vFromUrl = params.get('v') || ''
-      if (vFromUrl.length > 0 && !viewPasswd) {
+      if (vFromUrl.length > 0) {
         viewPasswd = vFromUrl
         $('#paste-view-passwd-input').val(vFromUrl)
-        sessionStorage.setItem(`vp_${short}`, vFromUrl)
       }
 
       updateButtons()
@@ -399,15 +375,10 @@ window.addEventListener('DOMContentLoaded', () => {
           success: paste => {
             pasteEditArea.val(paste)
             updateButtons()
-            // 保存密码到 sessionStorage
-            if (viewPasswd && viewPasswd.length > 0) {
-              sessionStorage.setItem(`vp_${short}`, viewPasswd)
-            }
           },
           error: (error) => {
-                        // 若需要查看密码，提示用户在输入框填写后自动重试
-            if ((error.status === 401 || error.status === 403) && (!viewPasswd || viewPasswd.length === 0)) {
-              submitErrMsg.text('该粘贴已加密，请在“查看密码”中输入后重试')
+            // 若需要查看密码，提示用户在输入框填写后自动重�?            if ((error.status === 401 || error.status === 403) && (!viewPasswd || viewPasswd.length === 0)) {
+              submitErrMsg.text('该粘贴已加密，请在“查看密码”中输入后重�?)
               $('#paste-view-passwd-input').focus()
             } else {
               handleError(error)
@@ -429,8 +400,7 @@ window.addEventListener('DOMContentLoaded', () => {
         },
       })
 
-            // 当用户填写/修改查看密码时尝试重新加载
-      $('#paste-view-passwd-input').on('change', () => {
+      // 当用户填�?修改查看密码时尝试重新加�?      $('#paste-view-passwd-input').on('change', () => {
         viewPasswd = $('#paste-view-passwd-input').val()
         loadPasteForAdmin()
       })
@@ -439,4 +409,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initAdmin()
 })
+
+
 

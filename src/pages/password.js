@@ -132,7 +132,14 @@ export function getPasswordPage(env, error) {
             const password = document.getElementById('passwordInput').value;
             if (!password) return;
             
-            // Add password to URL and reload
+            // 保存密码到 sessionStorage
+            const pathParts = window.location.pathname.split(':');
+            const short = pathParts[0].substring(1); // 去掉开头的 /
+            if (short) {
+                sessionStorage.setItem('vp_' + short, password);
+            }
+            
+            // Add password to URL and reload (will be cleaned by client script)
             const url = new URL(window.location.href);
             url.searchParams.set('v', password);
             window.location.href = url.toString();

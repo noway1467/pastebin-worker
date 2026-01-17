@@ -31,6 +31,35 @@ export async function handleGet(request, env, ctx) {
   }
 
   // return the editor for admin URL (has passwd in path)
+  // But first check if the paste requires view password
+  if (passwd.length > 0) {
+    // Check if paste exists and requires view password
+    const item = await env.PB.getWithMetadata(short, { type: "arrayBuffer" })
+    if (item.value !== null && item.metadata?.vProtected) {
+      const viewPasswd = url.searchParams.get("v") || ""
+      
+      // If no view password provided, show password input page
+      if (viewPasswd.length === 0) {
+        return new Response(getPasswordPage(env), {
+          headers: { "content-type": "text/html;charset=UTF-8" },
+        })
+      }
+      
+      // Try to verify the password by attempting to decrypt
+      try {
+        const salt = base64ToUint8Array(item.metadata.vSalt)
+        const iv = base64ToUint8Array(item.metadata.vIv)
+        await decryptWithPassword(item.value, viewPasswd, salt, iv)
+        // Password is correct, continue to show editor
+      } catch (e) {
+        // Password is wrong, show password page with error
+        return new Response(getPasswordPage(env, "密码错误，请重试"), {
+          headers: { "content-type": "text/html;charset=UTF-8" },
+        })
+      }
+    }
+  }
+  
   const staticPageContent = getStaticPage((passwd.length > 0) ? "/" : url.pathname, env)
   if (staticPageContent) {
     // access to all static pages requires auth
