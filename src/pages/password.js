@@ -1,100 +1,129 @@
 export function getPasswordPage(env, error) {
-    const errorHtml = error ? `<p style="color: var(--color-red); margin-bottom: 1rem; font-size: 14px;">${error}</p>` : '';
+    const errorHtml = error ? `<p style="color: #dc3545; margin-bottom: 1.2rem; font-size: 14px; font-weight: 500;">${error}</p>` : '';
     return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>需要密码</title>
+    <title>内容已加密</title>
     <style>
-        :root {
-            --color-bg: #ffffff;
-            --color-bg-secondary: #f6f8fa;
-            --color-green: #2ea44f;
-            --color-green-hover: #2c974b;
-            --color-text: #24292e;
-            --color-border: #eaeaea;
-            --color-red: #d73a49;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: var(--color-bg-secondary);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            padding: 20px;
         }
         .container {
-            background: var(--color-bg);
-            padding: 2.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: #ffffff;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
             width: 100%;
-            max-width: 300px;
-            border: 1px solid var(--color-border);
+            max-width: 380px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
         }
         h3 {
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            color: var(--color-text);
+            margin-bottom: 0.8rem;
+            color: #1a1a1a;
             font-weight: 600;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 2rem;
+            line-height: 1.5;
         }
         input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
         input:focus {
-            border-color: var(--color-green);
-            box-shadow: 0 0 0 3px rgba(46, 164, 79, 0.1);
+            border-color: #1a1a1a;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+        }
+        input::placeholder {
+            color: #999;
         }
         button {
             width: 100%;
-            padding: 10px;
-            background-color: var(--color-green);
+            padding: 14px;
+            background: #1a1a1a;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
         }
         button:hover {
-            background-color: var(--color-green-hover);
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        button:active {
+            transform: translateY(0);
         }
         .footer {
-            margin-top: 1.5rem;
-            font-size: 12px;
-            color: #999;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
         }
         .footer a {
-            color: #999;
+            color: #666;
             text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s;
         }
         .footer a:hover {
-            text-decoration: underline;
+            color: #1a1a1a;
+        }
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #ffebee;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3>🔒 加密内容</h3>
-        ${errorHtml}
+        <div class="lock-icon">🔒</div>
+        <h3>内容已加密</h3>
+        <p class="subtitle">请输入密码以查看内容</p>
+        ${errorHtml ? `<div class="error-message">${errorHtml}</div>` : ''}
         <form method="POST">
-            <input type="password" name="v" placeholder="输入查看密码" required autofocus autocomplete="off">
-            <button type="submit">解锁访问</button>
+            <input type="password" name="v" placeholder="请输入访问密码" required autofocus autocomplete="off">
+            <button type="submit">解锁查看</button>
         </form>
         <div class="footer">
-            <a href="/">返回首页</a>
+            <a href="/">← 返回首页</a>
         </div>
     </div>
 </body>

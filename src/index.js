@@ -1,4 +1,4 @@
-import { WorkerError, } from "./common.js"
+import { WorkerError, parsePath } from "./common.js"
 
 import { handleOptions, corsWrapResponse } from "./handlers/handleCors.js"
 import { handlePostOrPut } from "./handlers/handleWrite.js"
@@ -33,15 +33,23 @@ async function handleRequest(request, env, ctx) {
 }
 
 async function handleNormalRequest(request, env, ctx) {
-  const url = new URL(request.url)
-  const contentType = request.headers.get("content-type") || ""
-
   if (request.method === "POST") {
-    // 区分密码验证 POST 和内容上传 POST
-    // 密码验证 POST：路径不是根路径且使用 form-urlencoded
-    if (url.pathname !== "/" && contentType.includes("application/x-www-form-urlencoded")) {
-      return await handleGet(request, env, ctx)
+    const url = new URL(request.url)
+    const { short } = parsePath(url.pathname)
+    
+    // Check if this is a password verification POST
+    const contentType = request.headers.get("content-type") || ""
+    if (contentType.includes("application/x-www-form-urlencoded") && short) {
+      // This is a password form submission
+      const formData = await request.formData()
+      const viewPasswd = formData.get("v") || ""
+      
+      // Redirect to the same URL with password as query parameter
+      const redirectUrl = new URL(request.url)
+      redirectUrl.searchParams.set("v", viewPasswd)
+      return Response.redirect(redirectUrl.toString(), 302)
     }
+    
     return await handlePostOrPut(request, env, ctx, false)
   } else if (request.method === "GET") {
     return await handleGet(request, env, ctx)

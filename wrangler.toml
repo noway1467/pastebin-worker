@@ -6,7 +6,7 @@ workers_dev = false
 main = "src/index.js"
 
 rules = [
-  { type = "Text", globs = [ "**/*.html", "**/*.css", "**/*.md", "**/*.client.js" ], fallthrough = true }
+  { type = "Text", globs = [ "*/frontend/**", "*/doc/**" ], fallthrough = true }
 ]
 
 #----------------------------------------

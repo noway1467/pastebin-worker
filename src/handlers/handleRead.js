@@ -1,11 +1,12 @@
 import { decode, encodeRFC5987ValueChars, isLegalUrl, parsePath, WorkerError } from "../common.js"
 import { getStaticPage } from "../pages/staticPages.js"
+import { getPasswordPage } from "../pages/password.js"
 import { verifyAuth } from "../auth.js"
 import { getType } from "mime/lite.js"
 import { makeMarkdown } from "../pages/markdown.js"
 import { makeHighlight } from "../pages/highlight.js"
 import { decryptWithPassword, base64ToUint8Array } from "../crypto.js"
-import { getPasswordPage } from "../pages/password.js"
+import { getBoundary, parseFormdata } from "../parseFormdata.js"
 
 function staticPageCacheHeader(env) {
   const age = env.CACHE_STATIC_PAGE_AGE
@@ -92,39 +93,28 @@ export async function handleGet(request, env, ctx) {
     }
   }
 
-  // handle article (render as markdown)
-
   // handle language highlight
   const lang = url.searchParams.get("lang")
   let content = item.value
 
-  // handle view protection: require password input form to decrypt
+  // handle view protection: show password page if protected and no valid password provided
   if (item.metadata?.vProtected) {
-    // 优先从POST表单获取密码，其次从URL参数（兼容管理页面内部请求）
-    let viewPasswd = ""
-    if (request.method === "POST") {
-      try {
-        const formData = await request.formData()
-        viewPasswd = formData.get("v") || ""
-      } catch (e) {
-        viewPasswd = ""
-      }
-    } else {
-      viewPasswd = url.searchParams.get("v") || ""
-    }
-
+    const viewPasswd = url.searchParams.get("v") || ""
+    
+    // If no password provided, show password input page
     if (viewPasswd.length === 0) {
-      // 显示密码输入页面
-      return new Response(getPasswordPage(env, null), {
+      return new Response(getPasswordPage(env), {
         headers: { "content-type": "text/html;charset=UTF-8" },
       })
     }
+    
+    // Try to decrypt with provided password
     try {
       const salt = base64ToUint8Array(item.metadata.vSalt)
       const iv = base64ToUint8Array(item.metadata.vIv)
       content = await decryptWithPassword(content, viewPasswd, salt, iv)
     } catch (e) {
-      // 密码错误，显示错误提示
+      // Show password page with error message
       return new Response(getPasswordPage(env, "密码错误，请重试"), {
         headers: { "content-type": "text/html;charset=UTF-8" },
       })

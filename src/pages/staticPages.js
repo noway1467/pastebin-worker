@@ -8,8 +8,8 @@ import apiMd from "../../doc/api.md"
 
 function indexPage(env) {
   return indexHtml
-    .replace("{{CSS}}", () => styleCss)
-    .replace("{{INDEX_JS}}", () => indexJs)
+    .replace("{{CSS}}", styleCss)
+    .replace("{{INDEX_JS}}", indexJs)
     .replaceAll("{{BASE_URL}}", env.BASE_URL)
     .replaceAll("{{REPO}}", env.REPO)
     .replaceAll("{{FAVICON}}", env.FAVICON)

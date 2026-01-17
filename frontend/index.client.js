@@ -94,11 +94,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!pasteNotEmpty) {
       disableSubmitButton('Paste is empty')
     } else if (!expirationValid) {
-      disableSubmitButton(`Expiration “${expiration}” not valid`)
+      disableSubmitButton(`Expiration �?{expiration}�?not valid`)
     } else if (!nameValid) {
       disableSubmitButton(`The customized URL should satisfy regex ${NAME_REGEX}`)
     } else if (!adminUrlValid) {
-      disableSubmitButton(`Admin URL “${adminUrl}” not valid`)
+      disableSubmitButton(`Admin URL �?{adminUrl}�?not valid`)
     } else {
       submitButton.addClass('enabled')
       submitErrMsg.text('')
@@ -117,7 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
       submitButton.prop('title', '')
     } else {
       deleteButton.removeClass('enabled')
-      submitErrMsg.text(`The admin URL should start with “${base_url}” and contain a colon`)
+      submitErrMsg.text(`The admin URL should start with �?{base_url}�?and contain a colon`)
     }
   }
 
@@ -147,7 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#paste-file-show').removeClass('enabled')
     }
   }
-
+ 
   $('#paste-tab-file').on('input', event => {
     const files = event.target.files
     if (files.length === 0) return
@@ -159,20 +159,20 @@ window.addEventListener('DOMContentLoaded', () => {
     fileLine.children('.file-name').text(file.name)
     fileLine.children('.file-size').text(formatSize(file.size))
   })
-
+ 
   $('#paste-tab-edit').on('click', () => {
     inputType = 'edit'
     updateButtons()
     updateTabBar()
   })
-
+ 
   $('#paste-tab-preview').on('click', () => {
     inputType = 'preview'
     updateButtons()
     updateTabBar()
     $('#preview-content').html(marked.parse(pasteEditArea.val()))
   })
-
+ 
   pasteEditArea.on('input', () => {
     updateButtons()
     if (inputType === 'preview') {
@@ -270,7 +270,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (viewPasswd.length > 0) fd.append('v', viewPasswd)
     if ($('#paste-as-markdown-checkbox').prop('checked')) fd.append('m', 'true')
 
-    // 已移除长随机链接功能
     if (urlType === 'custom') fd.append('n', customName)
 
     $.post({
@@ -316,7 +315,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (uploaded.expire) {
       $('#uploaded-expiration').prop('value', uploaded.expire)
     }
-    // 查看密码功能已改为访问时输入密码框，不再在URL中携带密码参数
     updateButtons()
   }
 
@@ -353,13 +351,11 @@ window.addEventListener('DOMContentLoaded', () => {
       $('#paste-admin-url-input').val(location.href)
       urlType = 'admin'
       adminUrl = location.href
-      // 自动填充管理密码输入框
-      $('#paste-passwd-input').val(passwd)
+      // 自动填充管理密码输入�?      $('#paste-passwd-input').val(passwd)
       // 同步内存中的密码变量
       $("#paste-passwd-input").trigger('input')
 
-      // 如果 URL 上自带 ?v=，优先使用
-      const params = new URLSearchParams(location.search)
+      // 如果 URL 上自�??v=，优先使�?      const params = new URLSearchParams(location.search)
       const vFromUrl = params.get('v') || ''
       if (vFromUrl.length > 0) {
         viewPasswd = vFromUrl
@@ -380,9 +376,8 @@ window.addEventListener('DOMContentLoaded', () => {
             updateButtons()
           },
           error: (error) => {
-            // 若需要查看密码，提示用户在输入框填写后自动重试
-            if ((error.status === 401 || error.status === 403) && (!viewPasswd || viewPasswd.length === 0)) {
-              submitErrMsg.text('该粘贴已加密，请在“查看密码”中输入后重试')
+            // 若需要查看密码，提示用户在输入框填写后自动重�?            if ((error.status === 401 || error.status === 403) && (!viewPasswd || viewPasswd.length === 0)) {
+              submitErrMsg.text('该粘贴已加密，请在“查看密码”中输入后重�?)
               $('#paste-view-passwd-input').focus()
             } else {
               handleError(error)
@@ -404,8 +399,7 @@ window.addEventListener('DOMContentLoaded', () => {
         },
       })
 
-      // 当用户填写/修改查看密码时尝试重新加载
-      $('#paste-view-passwd-input').on('change', () => {
+      // 当用户填�?修改查看密码时尝试重新加�?      $('#paste-view-passwd-input').on('change', () => {
         viewPasswd = $('#paste-view-passwd-input').val()
         loadPasteForAdmin()
       })
@@ -414,3 +408,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initAdmin()
 })
+
