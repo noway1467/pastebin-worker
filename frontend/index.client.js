@@ -107,23 +107,23 @@ window.addEventListener('DOMContentLoaded', () => {
     const adminUrlValid = urlType !== 'admin' || isAdminUrlLegal(adminUrl)
 
     if (!pasteNotEmpty) {
-      disableSubmitButton('Paste is empty')
+      disableSubmitButton('内容为空')
     } else if (!expirationValid) {
-      disableSubmitButton(`Expiration "${expiration}" not valid`)
+      disableSubmitButton(`过期时间 "${expiration}" 格式不正确`)
     } else if (!nameValid) {
-      disableSubmitButton(`The customized URL should satisfy regex ${NAME_REGEX}`)
+      disableSubmitButton(`自定义链接需要满足正则表达式 ${NAME_REGEX}`)
     } else if (!adminUrlValid) {
-      disableSubmitButton(`Admin URL "${adminUrl}" not valid`)
+      disableSubmitButton(`管理链接 "${adminUrl}" 格式不正确`)
     } else {
       submitButton.addClass('enabled')
       submitErrMsg.text('')
     }
 
     if (urlType === 'admin') {
-      submitButton.text('Update')
+      submitButton.text('更新')
       deleteButton.removeClass('hidden')
     } else {
-      submitButton.text('Submit')
+      submitButton.text('提交')
       deleteButton.addClass('hidden')
     }
 
@@ -132,7 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
       submitButton.prop('title', '')
     } else {
       deleteButton.removeClass('enabled')
-      submitErrMsg.text(`The admin URL should start with "${base_url}" and contain a colon`)
+      submitErrMsg.text(`管理链接应该以 "${base_url}" 开头并包含冒号`)
     }
   }
 
@@ -308,7 +308,7 @@ window.addEventListener('DOMContentLoaded', () => {
       data: fd,
       processData: false,
       success: () => {
-        alert('Delete successfully')
+        alert('删除成功')
       },
       error: handleError,
     })
@@ -341,21 +341,21 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       document.execCommand('copy')
       resetCopyButtons()
-      button.textContent = 'Copied'
+      button.textContent = '已复制'
     } catch (err) {
-      alert('Failed to copy content')
+      alert('复制失败')
     }
   })
 
   function resetCopyButtons() {
-    $('.copy-button').text('Copy')
+    $('.copy-button').text('复制')
   }
 
   function handleError(error) {
     const status = error.status || ''
-    let statusText = error.statusText === 'error' ? 'Unknown error' : error.statusText
+    let statusText = error.statusText === 'error' ? '未知错误' : error.statusText
     const responseText = error.responseText || ''
-    alert(`Error ${status}: ${statusText}\n${responseText}\nView your console for more information`)
+    alert(`错误 ${status}: ${statusText}\n${responseText}\n查看控制台获取更多信息`)
     $('#submit-button').addClass('enabled')
   }
 

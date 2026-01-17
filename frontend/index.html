@@ -100,17 +100,23 @@
     <div id='paste-setting-panel'>
         <h3>设置</h3>
         <div id='paste-expiration-panel' class='paste-setting-subitem-panel'>
-            <input list='expiration-choices' type='text' min='60' step='1' name='paste-expiration'
-                   id='paste-expiration-input' placeholder='过期时间' value='7M'>
-            <label class='small-label' for='paste-expiration-input'>自动删除时间（留空则永久保存）<br>单位：s秒 m分 h时 d天 M月 Y年</label>
+            <div class="setting-row">
+                <input list='expiration-choices' type='text' min='60' step='1' name='paste-expiration'
+                       id='paste-expiration-input' placeholder='过期时间' value='7M'>
+                <label class='inline-label' for='paste-expiration-input'>留空永久保存 (s秒 m分 h时 d天 M月 Y年)</label>
+            </div>
         </div>
         <div id='paste-view-passwd-panel' class='paste-setting-subitem-panel'>
-            <input type='text' spellcheck='false' id='paste-view-passwd-input' placeholder='访问密码（可选）'>
-            <label class='small-label' for='paste-view-passwd-input'>设置后需要输入密码才能查看内容</label>
+            <div class="setting-row">
+                <input type='text' spellcheck='false' id='paste-view-passwd-input' placeholder='访问密码（可选）'>
+                <label class='inline-label' for='paste-view-passwd-input'>需要密码才能查看</label>
+            </div>
         </div>
         <div id='paste-passwd-panel' class='paste-setting-subitem-panel'>
-            <input type='text' spellcheck='false' name='paste-expiration' id='paste-passwd-input' placeholder='管理密码'>
-            <label class='small-label' for='paste-passwd-input'>用于删除或更新内容，留空则自动生成</label>
+            <div class="setting-row">
+                <input type='text' spellcheck='false' name='paste-expiration' id='paste-passwd-input' placeholder='管理密码'>
+                <label class='inline-label' for='paste-passwd-input'>用于删除或更新，留空自动生成</label>
+            </div>
         </div>
         <div class='label-line'>
             <input type='checkbox' id='paste-as-markdown-checkbox'>

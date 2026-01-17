@@ -9,7 +9,7 @@ body {
     background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
 }
 
-/* ÃÀ»¯±êÌâ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .site-title {
     margin: 0.5rem 0 1rem 0;
     padding: 0;
@@ -37,7 +37,7 @@ body {
     padding-top: 1rem;
 }
 
-/* ÃÀ»¯±êÌâ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .site-title {
     margin: 0.5rem 0 1rem 0;
     padding: 0;
@@ -56,7 +56,7 @@ body {
 .site-title a:hover {
     color: #000000;
 }
-/* ÃÀ»¯±êÌâ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .site-title {
     margin: 0.5rem 0 1rem 0;
     padding: 0;
@@ -130,7 +130,7 @@ body {
     }
 }
 
-/* ç§»åŠ¨ç«¯ä¼˜åŒ–ï¼šç¼©å°è¾“å…¥é¢æ¿å®½åº¦å’Œé«˜åº?*/
+/* ç§»åŠ¨ç«¯ä¼˜åŒ–ï¼šç¼©å°è¾“å…¥é¢æ¿å®½åº¦å’Œé«˜ï¿½?*/
 @media (max-width: 768px) {
     #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
         margin: 0.5rem 5%;
@@ -285,8 +285,16 @@ body {
     margin: 1rem 0;
 }
 
-.paste-setting-subitem-panel > input {
-    width: 100%;
+.paste-setting-subitem-panel .setting-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.paste-setting-subitem-panel > input,
+.paste-setting-subitem-panel .setting-row > input {
+    width: 50%;
+    max-width: 300px;
     border: 2px var(--color-border) solid;
     padding: 0.6rem 0.8rem;
     outline: none;
@@ -296,14 +304,42 @@ body {
     background: var(--color-bg-secondary);
 }
 
-.paste-setting-subitem-panel > input:focus {
+.paste-setting-subitem-panel > input:focus,
+.paste-setting-subitem-panel .setting-row > input:focus {
     border-color: var(--color-text);
     background: var(--color-bg);
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
-.paste-setting-subitem-panel > input::placeholder {
+.paste-setting-subitem-panel > input::placeholder,
+.paste-setting-subitem-panel .setting-row > input::placeholder {
     color: var(--color-text-light);
+}
+
+.inline-label {
+    flex: 1;
+    color: var(--color-text-light);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ç§»åŠ¨ç«¯ï¼šæ¢å¤åž‚ç›´å¸ƒå±€ */
+@media (max-width: 768px) {
+    .paste-setting-subitem-panel .setting-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .paste-setting-subitem-panel .setting-row > input {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .inline-label {
+        display: block;
+        margin-top: 0.3rem;
+    }
 }
 
 #paste-url-input-wrapper {
