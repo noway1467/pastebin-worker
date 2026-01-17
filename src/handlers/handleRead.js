@@ -6,7 +6,6 @@ import { getType } from "mime/lite.js"
 import { makeMarkdown } from "../pages/markdown.js"
 import { makeHighlight } from "../pages/highlight.js"
 import { decryptWithPassword, base64ToUint8Array } from "../crypto.js"
-import { getBoundary, parseFormdata } from "../parseFormdata.js"
 
 function staticPageCacheHeader(env) {
   const age = env.CACHE_STATIC_PAGE_AGE

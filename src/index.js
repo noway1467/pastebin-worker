@@ -33,23 +33,25 @@ async function handleRequest(request, env, ctx) {
 }
 
 async function handleNormalRequest(request, env, ctx) {
+  const url = new URL(request.url)
+  const { short, passwd } = parsePath(url.pathname)
+  
   if (request.method === "POST") {
-    const url = new URL(request.url)
-    const { short } = parsePath(url.pathname)
-    
-    // Check if this is a password verification POST
     const contentType = request.headers.get("content-type") || ""
-    if (contentType.includes("application/x-www-form-urlencoded") && short) {
-      // This is a password form submission
+    
+    // Check if this is a password verification POST (simple form, not multipart)
+    if (contentType.includes("application/x-www-form-urlencoded") && short && !passwd) {
+      // This is a password form submission for viewing protected content
       const formData = await request.formData()
       const viewPasswd = formData.get("v") || ""
       
       // Redirect to the same URL with password as query parameter
       const redirectUrl = new URL(request.url)
       redirectUrl.searchParams.set("v", viewPasswd)
-      return Response.redirect(redirectUrl.toString(), 302)
+      return Response.redirect(redirectUrl.toString(), 303)
     }
     
+    // Otherwise, it's a paste creation POST
     return await handlePostOrPut(request, env, ctx, false)
   } else if (request.method === "GET") {
     return await handleGet(request, env, ctx)

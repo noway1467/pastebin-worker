@@ -118,14 +118,64 @@ export function getPasswordPage(env, error) {
         <h3>内容已加密</h3>
         <p class="subtitle">请输入密码以查看内容</p>
         ${errorHtml ? `<div class="error-message">${errorHtml}</div>` : ''}
-        <form method="POST">
-            <input type="password" name="v" placeholder="请输入访问密码" required autofocus autocomplete="off">
-            <button type="submit">解锁查看</button>
+        <form id="passwordForm" onsubmit="return false;">
+            <input type="password" id="passwordInput" name="v" placeholder="请输入访问密码" required autofocus autocomplete="off">
+            <button type="button" onclick="submitPassword()">解锁查看</button>
         </form>
         <div class="footer">
             <a href="/">← 返回首页</a>
         </div>
     </div>
+    <script>
+        function submitPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (!password) return;
+            
+            // Store password in sessionStorage
+            sessionStorage.setItem('viewPassword', password);
+            
+            // Reload page - the password will be sent via fetch
+            location.reload();
+        }
+        
+        // Check if we have a stored password
+        const storedPassword = sessionStorage.getItem('viewPassword');
+        if (storedPassword) {
+            // Try to fetch content with password
+            fetch(location.pathname + '?v=' + encodeURIComponent(storedPassword))
+                .then(response => {
+                    if (response.ok && response.headers.get('content-type')?.includes('text/html')) {
+                        return response.text();
+                    }
+                    throw new Error('Invalid password');
+                })
+                .then(html => {
+                    // Check if we got the password page again (wrong password)
+                    if (html.includes('内容已加密')) {
+                        sessionStorage.removeItem('viewPassword');
+                        location.reload();
+                    } else {
+                        // Success - replace current page with content
+                        document.open();
+                        document.write(html);
+                        document.close();
+                        // Clear password from URL
+                        history.replaceState(null, '', location.pathname);
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.removeItem('viewPassword');
+                    location.reload();
+                });
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitPassword();
+            }
+        });
+    </script>
 </body>
 </html>`
 }

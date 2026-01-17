@@ -7,11 +7,69 @@
     <style media='screen'>
         {{CSS}}
     </style>
+    <style>
+        /* 样式补丁 */
+        body {
+            padding-top: 0.5rem;
+        }
+
+        .markdown-body {
+            padding-top: 0.5rem;
+        }
+
+        /* 美化标题 */
+        .site-title {
+            margin: 0.5rem 0 1rem 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.5px;
+        }
+
+        .site-title a {
+            color: #1a1a1a;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .site-title a:hover {
+            color: #000000;
+        }
+
+        /* 调整面板间距 */
+        #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
+            margin: 0.5rem 0 !important;
+        }
+
+        /* 减少顶部留白 */
+        .my-1 { 
+            margin-top: 0.25rem !important; 
+            margin-bottom: 0.5rem !important; 
+        }
+
+        .px-2 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        /* 移动端优化：所有面板宽度一致 */
+        @media (max-width: 768px) {
+            #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
+                margin: 0.5rem 5% !important;
+                width: 90% !important;
+            }
+            
+            #paste-textarea {
+                min-height: 320px !important;
+            }
+        }
+    </style>
 </head>
 <html lang='zh-CN'>
 <body>
 <div class='px-2 my-1 markdown-body'>
-    <h1><a href='index.html'>在线剪切板</a></h1>
+    <h2 class="site-title"><a href='index.html'>在线剪切板</a></h2>
 
     <div id='main-panels' class='panels'>
     <div id='paste-input-panel'>

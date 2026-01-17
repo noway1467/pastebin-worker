@@ -9,11 +9,71 @@ body {
     background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
 }
 
+/* 美化标题 */
+.site-title {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0;
+    border: none;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.site-title a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-title a:hover {
+    color: #000000;
+}
+
 .markdown-body {
     font-family: sans-serif;
     flex: 1;
     width: 100%;
     max-width: 1240px;
+    padding-top: 1rem;
+}
+
+/* 美化标题 */
+.site-title {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0;
+    border: none;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.site-title a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-title a:hover {
+    color: #000000;
+}
+/* 美化标题 */
+.site-title {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0;
+    border: none;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.site-title a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-title a:hover {
+    color: #000000;
 }
 
 .markdown-body tt, .markdown-body code {
@@ -50,7 +110,7 @@ body {
 
 #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
     border: 1px var(--color-border) solid;
-    margin: 0.8rem 0;
+    margin: 0.5rem 0;
     border-radius: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     background: var(--color-bg);
@@ -72,8 +132,8 @@ body {
 
 /* 绉诲姩绔紭鍖栵細缂╁皬杈撳叆闈㈡澘瀹藉害鍜岄珮搴?*/
 @media (max-width: 768px) {
-    #paste-input-panel {
-        margin: 0.8rem 5%;
+    #paste-input-panel, #paste-setting-panel, #paste-uploaded-panel {
+        margin: 0.5rem 5%;
         width: 90%;
     }
     
@@ -81,9 +141,15 @@ body {
         min-height: 320px !important;
     }
 }
+}
 
 /* 鍑忓皯椤堕儴鐣欑櫧 */
-.my-2 { margin-top: 8px !important; margin-bottom: 8px !important; }
+.my-1 { margin-top: 0.25rem !important; margin-bottom: 0.5rem !important; }
+
+.px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
 
 #paste-header {
     background-color: var(--color-shadowed);
